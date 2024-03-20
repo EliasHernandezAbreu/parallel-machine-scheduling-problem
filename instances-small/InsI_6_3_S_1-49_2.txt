@@ -1,0 +1,12 @@
+Clientes: 6
+Máquinas: 3
+Tiempos de procesamiento: 
+22	20	25	29	1	96	58	
+Tiempos de preparación: 
+0	23	6	4	27	4	14	
+48	0	11	26	15	17	15	
+2	36	0	45	7	7	30	
+48	19	38	0	42	45	29	
+1	4	19	5	0	45	30	
+33	31	19	20	23	0	1	
+19	27	30	49	38	41	0	

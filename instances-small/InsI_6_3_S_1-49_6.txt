@@ -1,0 +1,12 @@
+Clientes: 6
+Máquinas: 3
+Tiempos de procesamiento: 
+22	88	7	41	9	14	63	
+Tiempos de preparación: 
+0	23	6	4	27	4	14	
+48	0	8	44	23	19	23	
+2	9	0	23	13	37	28	
+48	25	42	0	19	25	24	
+1	41	10	25	0	22	18	
+33	21	17	13	9	0	4	
+19	41	24	13	8	22	0	

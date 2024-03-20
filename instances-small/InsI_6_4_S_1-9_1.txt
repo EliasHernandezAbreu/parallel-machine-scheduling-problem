@@ -1,0 +1,12 @@
+Clientes: 6
+Máquinas: 4
+Tiempos de procesamiento: 
+48	40	64	41	90	87	40	
+Tiempos de preparación: 
+0	5	4	8	9	3	4	
+3	0	2	8	1	8	3	
+7	8	0	1	3	4	6	
+8	7	7	0	9	1	8	
+7	8	6	7	0	8	4	
+6	4	7	7	4	0	7	
+7	5	6	3	4	2	0	
