@@ -8,15 +8,25 @@
  * @file Solution for a PMSP problem
  */
 
+#pragma once
+
+#include <vector>
+
+#include "problem.h"
+
 class Solution {
 public:
+  /**
+   * Constructor for solution class
+   * @param problem The problem this solution is for
+   */
+  Solution(const Problem &problem);
 
   /**
-  * Default constructor for solution class
-  */
-  Solution();
+   * Default destructor for solution
+   */
+  ~Solution() { delete[] machine_tasks; }
 
 private:
-
-
+  std::vector<int> *machine_tasks;
 };

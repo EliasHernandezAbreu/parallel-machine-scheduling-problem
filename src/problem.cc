@@ -41,3 +41,17 @@ Problem::Problem(const std::string &file_name) {
     }
   }
 }
+
+int Problem::getSetupCost(int task) const { return task_setup_cost[task]; }
+
+int Problem::getChangeCosts(int from, int to) const {
+  return task_change_cost[from][to];
+}
+
+int Problem::getMachineAmount() const {
+  return machine_amount;
+}
+
+int Problem::getTaskAmount() const {
+  return task_amount;
+}
