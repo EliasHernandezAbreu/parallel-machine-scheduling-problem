@@ -11,7 +11,6 @@
 #include "../lib/solution.h"
 #include "../lib/utils.h"
 
-#include <cstdio>
 #include <vector>
 
 Solution::Solution(const Problem *problem) {
@@ -25,29 +24,24 @@ Solution::Solution(const Problem *problem) {
 
 int Solution::testAddTaskTCT(int machine, int task, int position) const {
   std::vector<int> test_machine = machine_tasks[machine];
-  printf("test add task tct machine %d, task %d, position %d\n", machine, task,
-         position);
   test_machine.emplace(test_machine.begin() + position + 1, task);
-  printf("test add task tct machine %d, task %d, position %d\n", machine, task,
-         position);
-  int resulting_tct =
-      getMachineTCT(test_machine, original_problem->getChangeCosts());
+  int resulting_tct = getMachineTCT(test_machine, original_problem->getChangeCosts());
 
   return resulting_tct;
 }
 
 void Solution::addTask(int machine, int task, int position) {
-  printf("add task tct machine %d, task %d, position %d\n", machine, task,
-         position);
-  if (machine_tasks[machine].size() == position) {
-    machine_tasks[machine].push_back(task);
-  } else {
-    machine_tasks[machine].emplace(machine_tasks->begin() + position + 1, task);
-  }
-  printf("add task tct machine %d, task %d, position %d\n", machine, task,
-         position);
+  machine_tasks[machine].emplace(machine_tasks[machine].begin() + position + 1, task);
 }
 
 const std::vector<int> &Solution::getTasks(int machine) const {
   return machine_tasks[machine];
+}
+
+int Solution::getTotalTCT() const {
+  int total_tct = 0;
+  for (int m = 0; m < getMachineAmount(); m++) {
+    total_tct += getMachineTCT(machine_tasks[m], original_problem->getChangeCosts());
+  }
+  return total_tct;
 }

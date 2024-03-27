@@ -11,8 +11,7 @@
 #include "../lib/utils.h"
 #include <string>
 
-int getMachineTCT(const std::vector<int> &machine,
-                  int const *const *const change_costs) {
+int getMachineTCT(const std::vector<int> &machine, int const *const *const change_costs) {
   int result = 0;
   for (int i = 1; i < machine.size(); i++) {
     int work = 0;

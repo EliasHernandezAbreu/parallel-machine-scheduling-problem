@@ -13,14 +13,19 @@
 #include "../lib/problem.h"
 #include "../lib/utils.h"
 
-int main() {
-  Problem problem("test/i40/I40j_2m_S1_1.txt");
+int main(int argc, char** argv) {
+  if (argc < 2) {
+    printf("Add the file to solve as an argument\n");
+    return 1;
+  }
+  Problem problem(argv[1]);
   Algorithm *solver = new GreedyPMSP();
   Solution solution = solver->solve(&problem);
 
   for (int machine = 0; machine < problem.getMachineAmount(); machine++) {
     printf("machine %d: %s\n", machine, printMachine(solution.getTasks(machine)).c_str());
   }
+  printf("Total TCT = %d\n", solution.getTotalTCT());
 
   delete solver;
   return 0;

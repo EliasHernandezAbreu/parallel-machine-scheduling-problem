@@ -51,6 +51,18 @@ public:
   */
   void addTask(int machine, int task, int position);
 
+  /**
+  * Gets the total TCT of this solution
+  * @returns The total tct of the solution
+  */
+  int getTotalTCT() const;
+
+  /**
+  * Gets the amount of machines
+  * @returns The amount of machines
+  */
+  int getMachineAmount() const { return original_problem->getMachineAmount(); }
+
 private:
   const Problem* original_problem;
   std::vector<int> *machine_tasks;
