@@ -9,10 +9,19 @@
 #include <cstdio>
 #include <string>
 
+#include "../lib/greedy.h"
 #include "../lib/problem.h"
+#include "../lib/utils.h"
 
 int main() {
-  Problem dummy("test/i40/I40j_2m_S1_1.txt");
+  Problem problem("test/i40/I40j_2m_S1_1.txt");
+  Algorithm *solver = new GreedyPMSP();
+  Solution solution = solver->solve(&problem);
 
+  for (int machine = 0; machine < problem.getMachineAmount(); machine++) {
+    printf("machine %d: %s\n", machine, printMachine(solution.getTasks(machine)).c_str());
+  }
+
+  delete solver;
   return 0;
 }

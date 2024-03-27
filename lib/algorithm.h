@@ -16,11 +16,11 @@
 class Algorithm {
 public:
   /**
-  * Solves a PMSP problem
-  * @param probelm The PMSP probelm
-  * @returns The found solution to the problem
-  */
-  virtual Solution solve(const Problem &problem) const = 0;
+   * Solves a PMSP problem
+   * @param probelm The PMSP probelm
+   * @returns The found solution to the problem
+   */
+  virtual Solution solve(const Problem *problem) const = 0;
 
-private:
+  virtual ~Algorithm(){};
 };

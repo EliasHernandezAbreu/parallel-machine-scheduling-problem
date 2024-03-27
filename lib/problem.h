@@ -21,12 +21,12 @@ public:
    */
   Problem(const std::string &file_name);
 
-  /**
-   * Gets the setup costs
-   * @param task The task to get the cost from
-   * @returns The startup costs
-   */
-  int getSetupCost(int task) const;
+  ~Problem() {
+    for (int i = 0; i <= task_amount; i++) {
+      delete[] task_change_cost[i];
+    }
+    delete[] task_change_cost;
+  }
 
   /**
    * Gets the change costs from a task to another
@@ -34,24 +34,29 @@ public:
    * @param to The task to change to
    * @returns The change costs
    */
-  int getChangeCosts(int from, int to) const;
+  int getChangeCost(int from, int to) const;
 
   /**
-  * Gets the amount of machines in the problem
-  * @returns The amount of machines in the problem
-  */
+   * Gets the change cost matrix
+   * @returns The change cost matrix
+   */
+  int const *const *const getChangeCosts() const;
+
+  /**
+   * Gets the amount of machines in the problem
+   * @returns The amount of machines in the problem
+   */
   int getMachineAmount() const;
 
   /**
-  * Gets the amount of tasks in the problem
-  * @returns The amount of tasks in the problem
-  */
+   * Gets the amount of tasks in the problem
+   * @returns The amount of tasks in the problem
+   */
   int getTaskAmount() const;
 
 private:
   int task_amount;
   int machine_amount;
 
-  int *task_setup_cost;
   int **task_change_cost;
 };

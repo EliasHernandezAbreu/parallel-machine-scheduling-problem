@@ -20,13 +20,38 @@ public:
    * Constructor for solution class
    * @param problem The problem this solution is for
    */
-  Solution(const Problem &problem);
+  Solution(const Problem*);
 
   /**
    * Default destructor for solution
    */
   ~Solution() { delete[] machine_tasks; }
 
+  /**
+   * Gets the tasks assosiated to a machine
+   * @param machine The machine to get the tasks from
+   * @returns The tasks assosiated to that machine
+   */
+  const std::vector<int> &getTasks(int machine) const;
+
+  /**
+  * Tests the resulting TCT of a machine
+  * @param machine The machine to test
+  * @param task The task to add
+  * @param position The position to add it in
+  * @returns The total TCT of the machin after doing it
+  */
+  int testAddTaskTCT(int machine, int task, int position) const;
+
+  /**
+  * Adds a task to a machine in a position
+  * @param machine The machine to test
+  * @param task The task to add
+  * @param position The position to add it in
+  */
+  void addTask(int machine, int task, int position);
+
 private:
+  const Problem* original_problem;
   std::vector<int> *machine_tasks;
 };

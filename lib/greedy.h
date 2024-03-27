@@ -12,12 +12,12 @@
 
 #include "algorithm.h"
 
-class GreedyPMSP: public Algorithm {
-  public:
+class GreedyPMSP : public Algorithm {
+public:
   /**
-  * Solves a PMSP problem
-  * @param probelm The PMSP probelm
-  * @returns The found solution to the problem
-  */
-  Solution solve(const Problem &problem) const override;
+   * Solves a PMSP problem
+   * @param probelm The PMSP probelm
+   * @returns The found solution to the problem
+   */
+  Solution solve(const Problem *problem) const override;
 };
