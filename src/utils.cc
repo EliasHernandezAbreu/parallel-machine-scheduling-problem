@@ -24,7 +24,7 @@ int getMachineTCT(const std::vector<int> &machine, int const *const *const chang
 
 std::string printMachine(const std::vector<int> &machine) {
   std::string result = "INIT";
-  for (int i = 0; i < machine.size(); i++) {
+  for (int i = 1; i < machine.size(); i++) {
     result += " -> " + std::to_string(machine[i]);
   }
   return result;
