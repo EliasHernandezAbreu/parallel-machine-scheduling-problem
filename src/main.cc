@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
   for (int machine = 0; machine < problem.getMachineAmount(); machine++) {
     printf("machine %d: %s ; total: %d tasks\n", machine,
            printMachine(solution.getTasks(machine)).c_str(),
-           (int)solution.getTasks(machine).size() - 1);
+           (int)solution.getTasks(machine).size());
   }
   printf("Total TCT = %d\n", solution.getTotalTCT());
 
