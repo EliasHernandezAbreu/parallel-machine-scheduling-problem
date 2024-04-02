@@ -15,10 +15,20 @@
 class GraspPMSP : public Algorithm {
 public:
   /**
+   * @constructor
+   * @param best_solution_size The amount of best solutions the
+   *        algorithm will save to chose randomly from
+   */
+  GraspPMSP(int best_solution_size);
+
+  /**
    * Solves a PMSP problem
    * @param probelm The PMSP probelm
    * @returns The found solution to the problem
    */
   Solution solve(const Problem *problem) const override;
+
+private:
+  int best_solutions_size;
 };
 
