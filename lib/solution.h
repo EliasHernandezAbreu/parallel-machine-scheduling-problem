@@ -23,6 +23,17 @@ public:
   Solution(const Problem*);
 
   /**
+   * Default constructor
+  */
+  Solution();
+
+  /**
+   * Changes the problem used by the solution
+   * @param problem The new problem
+  */
+  void ChangeProblem(const Problem*);
+
+  /**
    * Default destructor for solution
    */
   ~Solution() { delete[] machine_tasks; }
@@ -62,6 +73,12 @@ public:
   * @returns The amount of machines
   */
   int getMachineAmount() const { return original_problem->getMachineAmount(); }
+
+  /**
+   * Copies a solution
+   * @param other The other solution
+  */
+  void operator=(const Solution& other);
 
 private:
   const Problem* original_problem;

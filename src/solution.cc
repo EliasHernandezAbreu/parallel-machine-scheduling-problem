@@ -22,6 +22,23 @@ Solution::Solution(const Problem *problem) {
   original_problem = problem;
 }
 
+Solution::Solution() {
+  machine_tasks = nullptr;
+  original_problem = nullptr;
+}
+
+void Solution::ChangeProblem(const Problem *problem) {
+  if (machine_tasks != nullptr) {
+    delete[] machine_tasks;
+  }
+  machine_tasks = new std::vector<int>[problem->getMachineAmount()];
+  for (int i = 0; i < problem->getMachineAmount(); i++) {
+    machine_tasks[i].reserve(problem->getTaskAmount());
+    machine_tasks[i].push_back(0); // All machines start with task 0
+  }
+  original_problem = problem;
+}
+
 int Solution::testAddTaskTCT(int machine, int task, int position) const {
   std::vector<int> test_machine = machine_tasks[machine];
   test_machine.emplace(test_machine.begin() + position + 1, task);
@@ -44,4 +61,12 @@ int Solution::getTotalTCT() const {
     total_tct += getMachineTCT(machine_tasks[m], original_problem->getChangeCosts());
   }
   return total_tct;
+}
+
+void Solution::operator=(const Solution& other) {
+  original_problem = other.original_problem;
+  machine_tasks = new std::vector<int>[original_problem->getMachineAmount()];
+  for (int m = 0; m < original_problem->getMachineAmount(); m++) {
+    machine_tasks[m] = other.machine_tasks[m];
+  }
 }
