@@ -8,40 +8,37 @@
  * @file Represents a problem
  */
 
+#include <cstdio>
 #include <string>
 
 #include "../lib/problem.h"
 
 Problem::Problem(const std::string &file_name) {
-  int *task_setup_cost;
-  std::ifstream in(file_name);
-  std::string token = "";
-  in >> token; // n:
-  in >> token; // programs
-  task_amount = std::stoi(token);
-  in >> token; // m:
-  in >> token; // machines
-  machine_amount = std::stoi(token);
-  in >> token; // Pi:U[1-99] Which is the cost or something
-  task_setup_cost = new int[task_amount + 1];
-  task_setup_cost[0] = 0; // Pseudo task for position 0 with no cost
-  for (int i = 1; i <= task_amount; i++) {
-    in >> token; // individual cost
-    task_setup_cost[i] = std::stoi(token);
-  }
-  in >> token; // Sij: U[1-49] yet another something
-  // Initialize the change cost array
-  task_change_cost = new int *[task_amount + 1];
-  for (int i = 0; i <= task_amount; i++) {
-    task_change_cost[i] = new int[task_amount + 1];
-  }
-  // Set change array values
-  for (int i = 0; i <= task_amount; i++) {
-    for (int j = 0; j <= task_amount; j++) {
-      in >> token;
-      task_change_cost[i][j] = std::stoi(token) + task_setup_cost[j];
+  FILE* input = fopen(file_name.c_str(), "r");
+  if (input != nullptr) {
+    char trash[15]; // String for storing non useful input data
+    fscanf(input, "n: %d\nm: %d\n", &task_amount, &machine_amount);
+    int task_setup_cost[task_amount + 1];
+    task_setup_cost[0] = 0;
+    fscanf(input, "%s", trash); // string that indicates start of task setup costs
+    for (int i = 0; i < task_amount; i++) {
+      int current_task_cost;
+      fscanf(input, "%d", &current_task_cost);
+      task_setup_cost[i + 1] = current_task_cost;
+    }
+    fscanf(input, "%s", trash); // string that indicates start of change costs
+    task_change_cost = new int*[task_amount + 1];
+    for (int i = 0; i <= task_amount; i++) {
+      task_change_cost[i] = new int[task_amount + 1];
+    }
+    for (int i = 0; i <= task_amount; i++) {
+      for (int j = 0; j <= task_amount; j++) {
+        fscanf(input, "%d", &task_change_cost[i][j]);
+        task_change_cost[i][j] += task_setup_cost[j];
+      }
     }
   }
+  fclose(input);
 }
 
 int Problem::getChangeCost(int from, int to) const {
