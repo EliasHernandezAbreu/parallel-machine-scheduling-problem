@@ -12,7 +12,7 @@
 
 #include "../lib/greedy.h"
 
-Solution GreedyPMSP::solve(const Problem *problem) const {
+Solution Greedy::solve(const Problem *problem) const {
   Solution result(problem);
   for (int task = 1; task <= problem->getTaskAmount(); task++) { // start in task 1 because task 0 is dumb
     int best_machine = 0;

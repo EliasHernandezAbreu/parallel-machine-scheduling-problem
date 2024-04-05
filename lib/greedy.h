@@ -12,7 +12,7 @@
 
 #include "algorithm.h"
 
-class GreedyPMSP : public Algorithm {
+class Greedy : public Algorithm {
 public:
   /**
    * Solves a PMSP problem

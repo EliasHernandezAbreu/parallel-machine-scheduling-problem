@@ -12,14 +12,14 @@
 
 #include "algorithm.h"
 
-class GraspPMSP : public Algorithm {
+class Grasp : public Algorithm {
 public:
   /**
    * @constructor
    * @param best_solution_size The amount of best solutions the
    *        algorithm will save to chose randomly from
    */
-  GraspPMSP(int best_solution_size, int repetitions);
+  Grasp(int best_solution_size, int repetitions);
 
   /**
    * Solves a PMSP problem

@@ -13,12 +13,12 @@
 
 #include "../lib/grasp.h"
 
-GraspPMSP::GraspPMSP(int best_solution_size, int repetitions) {
+Grasp::Grasp(int best_solution_size, int repetitions) {
   this->best_solutions_size = best_solution_size;
   this->repetitions = repetitions;
 }
 
-Solution GraspPMSP::solve(const Problem *problem) const {
+Solution Grasp::solve(const Problem *problem) const {
   // Create lists to store best results for each task
   int* best_machines = new int[best_solutions_size]();
   int* best_positions = new int[best_solutions_size]();
