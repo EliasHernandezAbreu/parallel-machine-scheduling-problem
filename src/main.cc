@@ -12,7 +12,6 @@
 #include "../lib/greedy.h"
 #include "../lib/grasp.h"
 #include "../lib/problem.h"
-#include "../lib/utils.h"
 
 int main(int argc, char** argv) {
   srand(time(NULL));
@@ -39,11 +38,12 @@ int main(int argc, char** argv) {
   Solution solution = solver->solve(&problem);
 
   for (int machine = 0; machine < problem.getMachineAmount(); machine++) {
-    printf("machine %d: %s ; total: %d tasks\n", machine,
-           printMachine(solution.getTasks(machine)).c_str(),
-           (int)solution.getTasks(machine).size());
+    printf("machine %d, tasks %d: ", machine, (int)solution.getTasks(machine).size()); 
+    solution.printMachine(machine);
+    printf("\n");
   }
   printf("Total TCT = %d\n", solution.getTotalTCT());
+  printf("Confirmed TCT = %d\n", solution.getConfirmedSlowTotalTCT());
 
   delete solver;
   return 0;

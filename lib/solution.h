@@ -10,9 +10,11 @@
 
 #pragma once
 
+#include <string>
 #include <vector>
 
 #include "problem.h"
+#include "task-movement.h"
 
 class Solution {
 public:
@@ -63,10 +65,34 @@ public:
   void addTask(int machine, int task, int position);
 
   /**
+   * Gets the TCT of this machine
+   * @returns The TCT of this machine
+   */
+  int getMachineTCT(int machine_index) const;
+
+  /**
   * Gets the total TCT of this solution
   * @returns The total tct of the solution
   */
   int getTotalTCT() const;
+
+  /**
+   * Gets the TCT of this machine
+   * @returns The TCT of this machine
+   */
+  int getConfirmedSlowMachineTCT(int machine_index) const;
+
+  /**
+  * Gets the total TCT of this solution
+  * @returns The total tct of the solution
+  */
+  int getConfirmedSlowTotalTCT() const;
+
+  /**
+   * Returns the current machine as a string
+   * @returns A string that represents the machine
+   */
+  void printMachine(int machine_index) const;
 
   /**
   * Gets the amount of machines
@@ -82,5 +108,6 @@ public:
 
 private:
   const Problem* original_problem;
+  int* machine_tcts;
   std::vector<int> *machine_tasks;
 };
