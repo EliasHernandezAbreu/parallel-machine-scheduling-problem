@@ -40,7 +40,7 @@ void Solution::ChangeProblem(const Problem *problem) {
   original_problem = problem;
 }
 
-int Solution::testAddTaskTCT(int machine_index, int task, int position) const {
+int Solution::testAddTaskIncrement(int machine_index, int task, int position) const {
   const std::vector<int>& machine = machine_tasks[machine_index];
   int const * const * const change_costs = original_problem->getChangeCosts();
 
@@ -48,7 +48,7 @@ int Solution::testAddTaskTCT(int machine_index, int task, int position) const {
     return change_costs[0][task];
   }
 
-  int new_tct = machine_tcts[machine_index];
+  int new_tct = 0;
   if (position == 0) {
     new_tct -= change_costs[0][machine[0]] * machine.size();
     new_tct += change_costs[task][machine[0]] * machine.size();
@@ -86,7 +86,7 @@ void Solution::printMachine(int machine_index) const {
 }
 
 void Solution::addTask(int machine_index, int task, int position) {
-  machine_tcts[machine_index] = testAddTaskTCT(machine_index, task, position);
+  machine_tcts[machine_index] += testAddTaskIncrement(machine_index, task, position);
   std::vector<int>& machine = machine_tasks[machine_index];
   machine.emplace(machine.begin() + position, task);
 }

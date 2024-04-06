@@ -54,7 +54,7 @@ public:
   * @param position The position to add it in
   * @returns The total TCT of the machin after doing it
   */
-  int testAddTaskTCT(int machine, int task, int position) const;
+  int testAddTaskIncrement(int machine, int task, int position) const;
 
   /**
   * Adds a task to a machine in a position

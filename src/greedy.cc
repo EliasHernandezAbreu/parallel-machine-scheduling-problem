@@ -17,15 +17,15 @@ Solution Greedy::solve(const Problem *problem) const {
   for (int task = 1; task <= problem->getTaskAmount(); task++) { // start in task 1 because task 0 is dumb
     int best_machine = 0;
     int best_position = 0;
-    int best_tct = 9999999;
+    int best_increment = 9999999;
 
     for (int current_machine = 0; current_machine < problem->getMachineAmount(); current_machine++) {
       const std::vector<int>& machine_tasks = result.getTasks(current_machine);
 
       for (int position = 0; position <= machine_tasks.size(); position++) {
-        int current_tct =  result.testAddTaskTCT(current_machine, task, position) - result.getMachineTCT(current_machine);
-        if (current_tct >= best_tct) continue;
-        best_tct = current_tct;
+        int current_increment = result.testAddTaskIncrement(current_machine, task, position);
+        if (current_increment >= best_increment) continue;
+        best_increment = current_increment;
         best_position = position;
         best_machine = current_machine;
       }
