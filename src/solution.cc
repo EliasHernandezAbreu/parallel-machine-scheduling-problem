@@ -10,7 +10,9 @@
 
 #include "../lib/solution.h"
 
+#include <algorithm>
 #include <cstdio>
+#include <stdexcept>
 #include <vector>
 
 Solution::Solution(const Problem *problem) {
@@ -129,6 +131,78 @@ int Solution::getConfirmedSlowTotalTCT() const {
     total_tct += getConfirmedSlowMachineTCT(m);
   }
   return total_tct;
+}
+
+int Solution::testMovement(TaskMovement* movement) const {
+  int increment_from = 0;
+  int increment_to = 0;
+  int const *const *const change_costs = original_problem->getChangeCosts();
+  const std::vector<int>& from_machine = machine_tasks[movement->from_machine];
+  const std::vector<int>& to_machine = machine_tasks[movement->to_machine];
+
+
+  if (movement->from_machine == movement->to_machine && movement->to_position == movement->from_position) {
+    return 0;
+  } else if (movement->from_position == machine_tasks[movement->from_machine].size()) {
+    throw std::runtime_error("Task out of machine size");
+  } else if (movement->swap && movement->to_position == machine_tasks[movement->to_machine].size()) {
+    throw std::runtime_error("Task out of machine size in swap");
+  }
+
+  if (movement->swap) {
+    // Task swap
+    const int* from_task = &(from_machine[movement->from_position]);
+    const int* to_task = &(to_machine[movement->to_position]);
+
+    int from_previous = movement->from_position == 0 ? 0 : *(from_task - 1);
+    int from_next = movement->from_position == from_machine.size() - 1 ? -1 : *(from_task + 1);
+
+    increment_from -= change_costs[from_previous][*(from_task)] * (from_machine.size() - movement->from_position);
+    increment_from += change_costs[from_previous][*(to_task)] * (from_machine.size() - movement->from_position);
+    if (from_next != -1) {
+      increment_from -= change_costs[*(from_task)][from_next] * (from_machine.size() - movement->from_position - 1);
+      increment_from += change_costs[*(to_task)][from_next] * (from_machine.size() - movement->from_position - 1);
+    }
+
+    int to_previous = movement->to_position == 0 ? 0 : *(to_task - 1);
+    int to_next = movement->to_position == to_machine.size() - 1 ? -1 : *(to_task + 1);
+
+    increment_to -= change_costs[to_previous][*(to_task)] * (to_machine.size() - movement->to_position);
+    increment_to += change_costs[to_previous][*(from_task)] * (to_machine.size() - movement->to_position);
+    if (to_next != -1) {
+      increment_to -= change_costs[*(to_task)][to_next] * (to_machine.size() - movement->to_position - 1);
+      increment_to += change_costs[*(from_task)][to_next] * (to_machine.size() - movement->to_position - 1);
+    }
+  } else {
+    if (movement->from_machine != movement->to_machine) {
+      const int* from_task = &(from_machine[movement->from_position]);
+      const int* to_task = &(to_machine[movement->to_position]);
+
+      int from_previous = movement->from_position == 0 ? 0 : *(from_task - 1);
+      if (movement->from_position != from_machine.size() - 1) {
+        increment_from -= change_costs[*from_task][*(from_task + 1)] * (from_machine.size() - movement->from_position - 1);
+        increment_from += change_costs[from_previous][*(from_task + 1)] * (from_machine.size() - movement->from_position - 1);
+      }
+      for (int pos = movement->from_position; pos > 0; pos--) {
+        increment_from -= change_costs[from_machine[pos - 1]][from_machine[pos]];
+      }
+      increment_from -= change_costs[0][from_machine[0]];
+
+      int to_previous = movement->to_position == 0 ? 0 : *(to_task - 1);
+      if (movement->to_position != to_machine.size() - 1) {
+        increment_to -= change_costs[to_previous][*to_task] * (to_machine.size() - movement->to_position);
+        increment_to += change_costs[from_previous][*(from_task + 1)] * (from_machine.size() - movement->from_position - 1);
+      }
+      for (int pos = movement->from_position - 1; pos > 0; pos--) {
+        increment_from -= change_costs[from_machine[pos - 1]][from_machine[pos]];
+      }
+      increment_from -= change_costs[0][from_machine[0]];
+    }
+  }
+
+  movement->increment_from = increment_from;
+  movement->increment_to = increment_to;
+  return increment_from + increment_to;
 }
 
 void Solution::operator=(const Solution& other) {

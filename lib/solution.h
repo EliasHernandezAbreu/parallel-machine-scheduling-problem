@@ -101,6 +101,19 @@ public:
   int getMachineAmount() const { return original_problem->getMachineAmount(); }
 
   /**
+   * Tests the movement of a task.
+   * If the destination machine is <0, it will do a global reinsertion.
+   * If the destination machine is not <0 but the destination task is, it will do a
+   * reinsertion in the same machine.
+   * Sets the increment_from and increment_to to the machines the task was removed from,
+   * and the one it was added to. If those are the same machine, the resulting increment
+   * of the machine will be the sum of both.
+   * @param movement The movement to test
+   * @returns The resulting total increment of the movement
+   */
+  int testMovement(TaskMovement* movement) const;
+
+  /**
    * Copies a solution
    * @param other The other solution
   */
