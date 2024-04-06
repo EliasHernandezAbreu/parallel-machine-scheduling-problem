@@ -8,6 +8,7 @@
  * @file Represents the grasp PMSP algorithm
  */
 
+#include <cstdio>
 #include <cstdlib>
 #include <vector>
 
@@ -20,15 +21,17 @@ Grasp::Grasp(int best_solution_size, int repetitions) {
 
 Solution Grasp::solve(const Problem *problem) const {
   // Create lists to store best results for each task
-  int* best_machines = new int[best_solutions_size]();
-  int* best_positions = new int[best_solutions_size]();
-  int* best_tcts = new int[best_solutions_size]();
+  int best_machines[best_solutions_size];
+  int best_positions[best_solutions_size];
+  int best_tcts[best_solutions_size];
   // Create list of results
-  Solution* result = new Solution[repetitions];
+  Solution result[repetitions];
   for (int r = 0; r < repetitions; r++) {
-    result[r] = Solution(problem);
+    printf("repetition %d\n", r);
+    result[r].ChangeProblem(problem);
     // Loop each task
     for (int task = 1; task <= problem->getTaskAmount(); task++) {
+      printf("task %d\n", task);
       // Reset the lists to their original values
       for (int i = 0; i < best_solutions_size; i++) {
         best_machines[i] = 0;
@@ -65,9 +68,6 @@ Solution Grasp::solve(const Problem *problem) const {
       result[r].addTask(chosen_machine, task, chosen_position);
     }
   }
-  delete[] best_machines;
-  delete[] best_positions;
-  delete[] best_tcts;
   // Get best result
   int best_result_index = 0;
   int best_result_tct = 9999999;
@@ -80,7 +80,6 @@ Solution Grasp::solve(const Problem *problem) const {
   }
   Solution final_result;
   final_result = result[best_result_index];
-  delete[] result;
   return final_result;
 }
 

@@ -23,17 +23,19 @@ Solution::Solution(const Problem *problem) {
 }
 Solution::Solution() {
   machine_tasks = nullptr;
+  machine_tcts = nullptr;
   original_problem = nullptr;
 }
 
 void Solution::ChangeProblem(const Problem *problem) {
-  if (machine_tasks != nullptr) {
+  if (machine_tasks != nullptr)
     delete[] machine_tasks;
-  }
+  if (machine_tcts != nullptr)
+    delete[] machine_tcts;
   machine_tasks = new std::vector<int>[problem->getMachineAmount()];
+  machine_tcts = new int[problem->getMachineAmount()];
   for (int i = 0; i < problem->getMachineAmount(); i++) {
     machine_tasks[i].reserve(problem->getTaskAmount());
-    machine_tasks[i].push_back(0); // All machines start with task 0
   }
   original_problem = problem;
 }
@@ -130,9 +132,17 @@ int Solution::getConfirmedSlowTotalTCT() const {
 }
 
 void Solution::operator=(const Solution& other) {
+  if (machine_tcts != nullptr)
+    delete[] machine_tcts;
+  if (machine_tasks != nullptr) 
+    delete[] machine_tasks;
   original_problem = other.original_problem;
   machine_tasks = new std::vector<int>[original_problem->getMachineAmount()];
   for (int m = 0; m < original_problem->getMachineAmount(); m++) {
     machine_tasks[m] = other.machine_tasks[m];
+  }
+  machine_tcts = new int[original_problem->getMachineAmount()];
+  for (int tct = 0; tct < original_problem->getMachineAmount(); tct++) {
+    machine_tcts[tct] = other.getMachineTCT(tct);
   }
 }

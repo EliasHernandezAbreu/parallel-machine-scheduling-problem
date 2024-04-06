@@ -8,7 +8,6 @@
  * @file Represents the greedy PMSP algorithm
  */
 
-#include <cstdio>
 #include <vector>
 
 #include "../lib/greedy.h"
@@ -32,11 +31,6 @@ Solution Greedy::solve(const Problem *problem) const {
       }
     }
     result.addTask(best_machine, task, best_position);
-    result.printMachine(best_machine);
-    printf("task: %d, machine: %d, position: %d, tct got %d, confirmed %d\n",
-           task, best_machine, best_position,
-           result.getMachineTCT(best_machine),
-           result.getConfirmedSlowMachineTCT(best_machine));
   }
   return result;
 }
