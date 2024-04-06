@@ -33,7 +33,7 @@ void Solution::ChangeProblem(const Problem *problem) {
   if (machine_tcts != nullptr)
     delete[] machine_tcts;
   machine_tasks = new std::vector<int>[problem->getMachineAmount()];
-  machine_tcts = new int[problem->getMachineAmount()];
+  machine_tcts = new int[problem->getMachineAmount()]();
   for (int i = 0; i < problem->getMachineAmount(); i++) {
     machine_tasks[i].reserve(problem->getTaskAmount());
   }

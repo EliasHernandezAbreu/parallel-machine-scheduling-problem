@@ -10,8 +10,8 @@
 
 struct TaskMovement {
   int from_machine;
-  int from_task;
+  int from_position;
   int to_machine;
-  int to_task;
+  int to_position;
   bool swap;
 };

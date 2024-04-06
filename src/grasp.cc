@@ -27,12 +27,12 @@ Solution Grasp::solve(const Problem *problem) const {
   // Create list of results
   Solution result[repetitions];
   for (int r = 0; r < repetitions; r++) {
-    printf("repetition %d\n", r);
     result[r].ChangeProblem(problem);
     // Loop each task
     for (int task = 1; task <= problem->getTaskAmount(); task++) {
-      printf("task %d\n", task);
       // Reset the lists to their original values
+      int worst_best_index = 0;
+      int worst_best_tct = 9999999;
       for (int i = 0; i < best_solutions_size; i++) {
         best_machines[i] = 0;
         best_positions[i] = 0;
@@ -42,22 +42,22 @@ Solution Grasp::solve(const Problem *problem) const {
       for (int current_machine = 0; current_machine < problem->getMachineAmount(); current_machine++) {
         // Loop each position of the machine
         std::vector<int> machine_tasks = result[r].getTasks(current_machine);
-        for (int position = 0; position < machine_tasks.size(); position++) {
+        for (int position = 0; position <= machine_tasks.size(); position++) {
           int current_tct = result[r].testAddTaskTCT(current_machine, task, position);
-          // Get the index of the task to change in the list of bests
-          int worst_best_index = 0;
-          int worst_best_tct = 0;
-          for (int i = 0; i < best_solutions_size; i++) {
-            if (best_tcts[i] > worst_best_tct) {
-              worst_best_tct = best_tcts[i];
-              worst_best_index = i;
-            }
-          }
+          current_tct -= result[r].getMachineTCT(current_machine); // Keep the increment only
           // Change the lists element to the new one (if its better)
           if (current_tct < worst_best_tct) {
             best_tcts[worst_best_index] = current_tct;
             best_machines[worst_best_index] = current_machine;
             best_positions[worst_best_index] = position;
+            worst_best_tct = current_tct;
+            // Get the index of the task to change in the list of bests
+            for (int i = 0; i < best_solutions_size; i++) {
+              if (best_tcts[i] > worst_best_tct) {
+                worst_best_tct = best_tcts[i];
+                worst_best_index = i;
+              }
+            }
           }
         }
       }

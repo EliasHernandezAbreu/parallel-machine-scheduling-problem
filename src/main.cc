@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
   if (chosen_solver == 0) {
     solver = new Greedy();
   } else if (chosen_solver == 1) {
-    solver = new Grasp(3, 100);
+    solver = new Grasp(2, 100);
   } else {
     printf("Please use a valid input. Input given: %d\n", chosen_solver);
     return 1;
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
   Problem problem(argv[1]);
   Solution solution = solver->solve(&problem);
-
+  printf("\n");
   for (int machine = 0; machine < problem.getMachineAmount(); machine++) {
     printf("machine %d, tasks %d: ", machine, (int)solution.getTasks(machine).size()); 
     solution.printMachine(machine);
