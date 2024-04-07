@@ -8,6 +8,8 @@
  * @file Defines the movement of a task in a solution
  */
 
+#pragma once
+
 struct TaskMovement {
   int from_machine;
   int from_position;

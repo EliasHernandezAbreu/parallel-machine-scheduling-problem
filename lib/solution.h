@@ -11,8 +11,8 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
+#include "machine.h"
 #include "problem.h"
 #include "task-movement.h"
 
@@ -33,19 +33,12 @@ public:
    * Changes the problem used by the solution
    * @param problem The new problem
   */
-  void ChangeProblem(const Problem*);
+  void fromProblem(const Problem*);
 
   /**
    * Default destructor for solution
    */
-  ~Solution() { delete[] machine_tasks; }
-
-  /**
-   * Gets the tasks assosiated to a machine
-   * @param machine The machine to get the tasks from
-   * @returns The tasks assosiated to that machine
-   */
-  const std::vector<int> &getTasks(int machine) const;
+  ~Solution() { delete[] machines; }
 
   /**
   * Tests the resulting TCT of a machine
@@ -61,8 +54,18 @@ public:
   * @param machine The machine to test
   * @param task The task to add
   * @param position The position to add it in
+  * @param increment The increment of said insertion
   */
-  void addTask(int machine, int task, int position);
+  void addTask(int machine, int task, int position, int increment);
+
+  /**
+   * Gets the best machine and position to insert a task
+   * @param task The task to insert
+   * @param machine_index The best machine to put it in
+   * @param position The best position to place it at
+   * @returns The increment of said insertion
+   */
+  int bestInsert(int task, int* machine_index, int* position) const;
 
   /**
    * Gets the TCT of this machine
@@ -77,16 +80,10 @@ public:
   int getTotalTCT() const;
 
   /**
-   * Gets the TCT of this machine
-   * @returns The TCT of this machine
-   */
-  int getConfirmedSlowMachineTCT(int machine_index) const;
-
-  /**
   * Gets the total TCT of this solution
   * @returns The total tct of the solution
   */
-  int getConfirmedSlowTotalTCT() const;
+  int getConfirmedTotalTCT() const;
 
   /**
    * Returns the current machine as a string
@@ -95,10 +92,15 @@ public:
   void printMachine(int machine_index) const;
 
   /**
+   * Prints the solution
+   */
+  void print() const;
+
+  /**
   * Gets the amount of machines
   * @returns The amount of machines
   */
-  int getMachineAmount() const { return original_problem->getMachineAmount(); }
+  int getMachineAmount() const { return machine_amount; }
 
   /**
    * Tests the movement of a task.
@@ -120,7 +122,6 @@ public:
   void operator=(const Solution& other);
 
 private:
-  const Problem* original_problem;
-  int* machine_tcts;
-  std::vector<int> *machine_tasks;
+  int machine_amount;
+  Machine* machines;
 };

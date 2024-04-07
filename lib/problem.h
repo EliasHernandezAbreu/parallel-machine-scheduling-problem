@@ -40,7 +40,7 @@ public:
    * Gets the change cost matrix
    * @returns The change cost matrix
    */
-  int const *const *const getChangeCosts() const;
+  int **const getChangeCosts() const;
 
   /**
    * Gets the amount of machines in the problem

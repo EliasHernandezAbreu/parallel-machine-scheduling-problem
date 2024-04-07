@@ -9,131 +9,91 @@
  */
 
 #include "../lib/solution.h"
-
-#include <algorithm>
 #include <cstdio>
-#include <stdexcept>
-#include <vector>
 
 Solution::Solution(const Problem *problem) {
-  machine_tcts = new int[problem->getMachineAmount()]();
-  machine_tasks = new std::vector<int>[problem->getMachineAmount()];
-  for (int i = 0; i < problem->getMachineAmount(); i++) {
-    machine_tasks[i].reserve(problem->getTaskAmount());
+  machine_amount = problem->getMachineAmount();
+  machines = new Machine[machine_amount]();
+  for (int m = 0; m < machine_amount; m++) {
+    machines[m].fromProblem(problem);
   }
-  original_problem = problem;
 }
+
 Solution::Solution() {
-  machine_tasks = nullptr;
-  machine_tcts = nullptr;
-  original_problem = nullptr;
+  machine_amount = 0;
+  machines = nullptr;
 }
 
-void Solution::ChangeProblem(const Problem *problem) {
-  if (machine_tasks != nullptr)
-    delete[] machine_tasks;
-  if (machine_tcts != nullptr)
-    delete[] machine_tcts;
-  machine_tasks = new std::vector<int>[problem->getMachineAmount()];
-  machine_tcts = new int[problem->getMachineAmount()]();
-  for (int i = 0; i < problem->getMachineAmount(); i++) {
-    machine_tasks[i].reserve(problem->getTaskAmount());
+void Solution::fromProblem(const Problem *problem) {
+  machine_amount = problem->getMachineAmount();
+  machines = new Machine[machine_amount]();
+  for (int m = 0; m < machine_amount; m++) {
+    machines[m].fromProblem(problem);
   }
-  original_problem = problem;
-}
-
-int Solution::testAddTaskIncrement(int machine_index, int task, int position) const {
-  const std::vector<int>& machine = machine_tasks[machine_index];
-  int const * const * const change_costs = original_problem->getChangeCosts();
-
-  if (machine.size() == 0) {
-    return change_costs[0][task];
-  }
-
-  int new_tct = 0;
-  if (position == 0) {
-    new_tct -= change_costs[0][machine[0]] * machine.size();
-    new_tct += change_costs[task][machine[0]] * machine.size();
-    new_tct += change_costs[0][task] * (machine.size() + 1);
-    return new_tct;
-  }
-  
-  if (position == machine.size()) {
-    new_tct += change_costs[machine[position - 1]][task];
-
-  } else {
-    new_tct -= change_costs[machine[position - 1]][machine[position]] * (machine.size() - position);
-    new_tct += change_costs[machine[position - 1]][task] * (machine.size() - position + 1);
-    new_tct += change_costs[task][machine[position]] * (machine.size() - position);
-  }
-  
-  for (int i = position - 1; i > 0; i--) {
-    new_tct += change_costs[machine[i - 1]][machine[i]]; 
-  }
-  new_tct += change_costs[0][machine[0]];
-  return new_tct;
 }
 
 void Solution::printMachine(int machine_index) const {
-  const std::vector<int>& machine = machine_tasks[machine_index];
-  printf("[");
-  for (int i = 0; i < machine.size(); i++) {
-    if (i == 0) {
-      printf("%d", machine[0]);
-    } else {
-      printf(" -> %d", machine[i]);
-    }
+  machines[machine_index].print();
+}
+
+void Solution::print() const {
+  for (int m = 0; m < machine_amount; m++) {
+    printf("%d: %d tasks, tct = %d, confirmed = %d, tasks:\n",
+           m,
+           machines[m].getSize(),
+           machines[m].getTCT(),
+           machines[m].confirmTCT());
+    machines[m].print();
+    printf("\n");
   }
-  printf("]");
+  printf("total TCT = %d, confirmed = %d\n", getTotalTCT(), getConfirmedTotalTCT());
 }
 
-void Solution::addTask(int machine_index, int task, int position) {
-  machine_tcts[machine_index] += testAddTaskIncrement(machine_index, task, position);
-  std::vector<int>& machine = machine_tasks[machine_index];
-  machine.emplace(machine.begin() + position, task);
-}
-
-const std::vector<int> &Solution::getTasks(int machine) const {
-  return machine_tasks[machine];
+void Solution::addTask(int machine_index, int task, int position, int increment) {
+  machines[machine_index].addTask(task, position, increment);
 }
 
 int Solution::getMachineTCT(int machine_index) const {
-  return machine_tcts[machine_index];
+  return machines[machine_index].getTCT();
 }
 
 int Solution::getTotalTCT() const {
   int total_tct = 0;
   for (int m = 0; m < getMachineAmount(); m++) {
-    total_tct += machine_tcts[m];
+    total_tct += machines[m].getTCT();
   }
   return total_tct;
 }
 
-int Solution::getConfirmedSlowMachineTCT(int machine_index) const {
-  const std::vector<int>& machine = machine_tasks[machine_index];
-  int result = 0;
-  for (int i = 0; i < machine.size(); i++) {
-    int work = 0;
-    if (i == 0) {
-      work += original_problem->getChangeCost(0, machine[0]);
-      } else {
-      work += original_problem->getChangeCost(machine[i - 1], machine[i]);
-    }
-    work *= machine.size() - i;
-    result += work;
-  }
-  return result;
-}
 
-int Solution::getConfirmedSlowTotalTCT() const {
+int Solution::getConfirmedTotalTCT() const {
   int total_tct = 0;
   for (int m = 0; m < getMachineAmount(); m++) {
-    total_tct += getConfirmedSlowMachineTCT(m);
+    total_tct += machines[m].confirmTCT();
   }
   return total_tct;
+}
+
+int Solution::bestInsert(int task, int* machine_index, int* position) const {
+  int best_machine = 0;
+  int best_position = 0;
+  int best_increment = 99999999;
+  for (int m = 0; m < machine_amount; m++) {
+    int current_increment;
+    int current_position = machines[m].bestInsert(task, &current_increment);
+    if (current_increment < best_increment) {
+      best_increment = current_increment;
+      best_machine = m;
+      best_position = current_position;
+    }
+  }
+  machine_index[0] = best_machine;
+  position[0] = best_position;
+  return best_increment;
 }
 
 int Solution::testMovement(TaskMovement* movement) const {
+  /*
   int increment_from = 0;
   int increment_to = 0;
   int const *const *const change_costs = original_problem->getChangeCosts();
@@ -203,20 +163,6 @@ int Solution::testMovement(TaskMovement* movement) const {
   movement->increment_from = increment_from;
   movement->increment_to = increment_to;
   return increment_from + increment_to;
-}
-
-void Solution::operator=(const Solution& other) {
-  if (machine_tcts != nullptr)
-    delete[] machine_tcts;
-  if (machine_tasks != nullptr) 
-    delete[] machine_tasks;
-  original_problem = other.original_problem;
-  machine_tasks = new std::vector<int>[original_problem->getMachineAmount()];
-  for (int m = 0; m < original_problem->getMachineAmount(); m++) {
-    machine_tasks[m] = other.machine_tasks[m];
-  }
-  machine_tcts = new int[original_problem->getMachineAmount()];
-  for (int tct = 0; tct < original_problem->getMachineAmount(); tct++) {
-    machine_tcts[tct] = other.getMachineTCT(tct);
-  }
+  */
+  return 0;
 }

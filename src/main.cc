@@ -37,13 +37,7 @@ int main(int argc, char** argv) {
   Problem problem(argv[1]);
   Solution solution = solver->solve(&problem);
   printf("\n");
-  for (int machine = 0; machine < problem.getMachineAmount(); machine++) {
-    printf("machine %d, tasks %d: ", machine, (int)solution.getTasks(machine).size()); 
-    solution.printMachine(machine);
-    printf("\n");
-  }
-  printf("Total TCT = %d\n", solution.getTotalTCT());
-  printf("Confirmed TCT = %d\n", solution.getConfirmedSlowTotalTCT());
+  solution.print();
 
   delete solver;
   return 0;

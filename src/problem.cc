@@ -45,7 +45,7 @@ int Problem::getChangeCost(int from, int to) const {
   return task_change_cost[from][to];
 }
 
-int const *const *const Problem::getChangeCosts() const {
+int **const Problem::getChangeCosts() const {
   return task_change_cost;
 }
 
