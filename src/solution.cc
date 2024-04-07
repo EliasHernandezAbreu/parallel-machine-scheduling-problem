@@ -8,8 +8,9 @@
  * @file Solution for a PMSP problem
  */
 
-#include "../lib/solution.h"
 #include <cstdio>
+
+#include "../lib/solution.h"
 
 Solution::Solution(const Problem *problem) {
   machine_amount = problem->getMachineAmount();
@@ -22,6 +23,14 @@ Solution::Solution(const Problem *problem) {
 Solution::Solution() {
   machine_amount = 0;
   machines = nullptr;
+}
+
+Solution::Solution(const Solution& other) {
+  machine_amount = other.machine_amount;
+  machines = new Machine[machine_amount]();
+  for (int m = 0; m < machine_amount; m++) {
+    machines[m].copy(other.machines[m]);
+  }
 }
 
 void Solution::fromProblem(const Problem *problem) {
@@ -74,22 +83,31 @@ int Solution::getConfirmedTotalTCT() const {
   return total_tct;
 }
 
-int Solution::bestInsert(int task, int* machine_index, int* position) const {
-  int best_machine = 0;
-  int best_position = 0;
-  int best_increment = 99999999;
+void Solution::bestInsert(int task, int* increment, int* machine_index, int* position, int result_size) const {
+  int worst_best_index = 0;
+  int worst_best_increment = 9999999;
+  for (int i = 0; i < result_size; i++) {
+    machine_index[i] = 0;
+    position[i] = 0;
+    increment[i] = 9999999;
+  }
   for (int m = 0; m < machine_amount; m++) {
-    int current_increment;
-    int current_position = machines[m].bestInsert(task, &current_increment);
-    if (current_increment < best_increment) {
-      best_increment = current_increment;
-      best_machine = m;
-      best_position = current_position;
+    for (int current_position = 0; current_position <= machines[m].getSize(); current_position++) {
+      int current_increment = machines[m].testAddTask(task, current_position);
+      if (current_increment < worst_best_increment) {
+        increment[worst_best_index] = current_increment;
+        machine_index[worst_best_index] = m;
+        position[worst_best_index] = current_position;
+        worst_best_increment = current_increment;
+        for (int i = 0; i < result_size; i++) {
+          if (increment[i] > worst_best_increment) {
+            worst_best_increment = increment[i];
+            worst_best_index = i;
+          }
+        }
+      }
     }
   }
-  machine_index[0] = best_machine;
-  position[0] = best_position;
-  return best_increment;
 }
 
 int Solution::testMovement(TaskMovement* movement) const {

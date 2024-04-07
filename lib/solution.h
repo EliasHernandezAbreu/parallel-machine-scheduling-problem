@@ -30,6 +30,12 @@ public:
   Solution();
 
   /**
+   * Copy constructor
+   * @param solution The solution to copy
+   */
+  Solution(const Solution& solution);
+
+  /**
    * Changes the problem used by the solution
    * @param problem The new problem
   */
@@ -61,11 +67,13 @@ public:
   /**
    * Gets the best machine and position to insert a task
    * @param task The task to insert
+   * @param increment The best increments found
    * @param machine_index The best machine to put it in
    * @param position The best position to place it at
+   * @param result_size The amount of results to keep
    * @returns The increment of said insertion
    */
-  int bestInsert(int task, int* machine_index, int* position) const;
+  void bestInsert(int task, int* increment, int* machine_index, int* position, int result_size) const;
 
   /**
    * Gets the TCT of this machine

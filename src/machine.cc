@@ -18,6 +18,28 @@ Machine::Machine() {
   tct = 0;
 }
 
+Machine::Machine(const Machine& other) {
+  change_costs = other.change_costs;
+  capacity = other.capacity;
+  size = other.size;
+  tct = other.tct;
+  tasks = new int[capacity];
+  for (int t = 0; t < size; t++) {
+    tasks[t] = other.tasks[t];
+  }
+}
+
+void Machine::copy(const Machine& other) {
+  change_costs = other.change_costs;
+  capacity = other.capacity;
+  size = other.size;
+  tct = other.tct;
+  tasks = new int[capacity];
+  for (int t = 0; t < size; t++) {
+    tasks[t] = other.tasks[t];
+  }
+}
+
 void Machine::fromProblem(const Problem* problem) {
   capacity = problem->getTaskAmount();
   size = 0;
@@ -111,4 +133,8 @@ int Machine::confirmTCT() const {
 
 int Machine::getSize() const {
   return size;
+}
+
+int const *const Machine::getTasks() const {
+  return tasks;
 }

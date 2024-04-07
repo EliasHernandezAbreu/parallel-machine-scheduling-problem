@@ -16,7 +16,7 @@ Solution Greedy::solve(const Problem *problem) const {
     int machine_index;
     int position;
     int increment;
-    increment = result.bestInsert(task, &machine_index, &position);
+    result.bestInsert(task, &increment, &machine_index, &position, 1);
     result.addTask(machine_index, task, position, increment);
   }
   return result;

@@ -21,6 +21,18 @@ public:
   Machine();
 
   /**
+   * Copy constructor
+   * @param other The machine to copy
+   */
+  Machine(const Machine& other);
+
+  /**
+   * Copies other machine
+   * @param Machine to copy
+   */
+  void copy(const Machine& other);
+
+  /**
    * Default destructor
    */
   ~Machine() {
@@ -79,6 +91,8 @@ public:
   * @returns The amount of tasks in the machine
   */
   int getSize() const;
+
+  int const *const getTasks() const;
 
 private:
   int** change_costs;
