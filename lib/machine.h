@@ -53,6 +53,19 @@ public:
   int testAddTask(int task, int position) const;
 
   /**
+   * Gets the increment on the tct if a task was removed
+   * @param position The task to remove
+   * @returns The increment
+   */
+  int testRemoveTask(int position) const;
+
+  int testChangeTask(int position, int task) const;
+
+  int testSwapTasks(int from, int to) const;
+  
+  int testMoveTask(int from, int to) const;
+
+  /**
    * Adds a task to the machine
    * @param task The task to add
    * @param position The position to add it at
@@ -79,6 +92,15 @@ public:
   * @returns The tct of the machine
   */
   int getTCT() const;
+
+  /**
+   * Gets the work of a given task
+   * @param position The position of the task
+   * @param task The task at the position (empty for auto)
+   * @param previous_task The task previous to the position (empty for auto)
+   * @returns The work of a given task
+   */
+  int getTaskWork(int position, int task = -1, int previous_task = -1) const;
 
   /**
   * Computes the entire tct of the machine

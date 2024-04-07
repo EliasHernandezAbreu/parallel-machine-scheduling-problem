@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
   if (chosen_solver == 0) {
     solver = new Greedy();
   } else if (chosen_solver == 1) {
-    solver = new Grasp(2, 100);
+    solver = new Grasp(3, 100);
   } else {
     printf("Please use a valid input. Input given: %d\n", chosen_solver);
     return 1;

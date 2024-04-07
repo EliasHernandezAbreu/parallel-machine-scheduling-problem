@@ -15,7 +15,7 @@ struct TaskMovement {
   int from_position;
   int to_machine;
   int to_position;
-  bool swap;
   int increment_from;
   int increment_to;
+  bool swap;
 };
