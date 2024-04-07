@@ -9,6 +9,7 @@
  */
 
 #include "../lib/machine.h"
+#include <cstdio>
 
 Machine::Machine() {
   change_costs = nullptr;
@@ -86,30 +87,23 @@ int Machine::testAddTask(int task, int position) const {
 
 int Machine::testRemoveTask(int position) const {
   int increment = 0;
-  int previous_task = position == 0 ? 0 : tasks[position - 1];
-  increment -= change_costs[previous_task][tasks[position]] * (size - position);
-  if (position != size - 1) {
-    increment -= change_costs[tasks[position]][tasks[position + 1]] * (size - position - 1);
-    increment += change_costs[previous_task][tasks[position + 1]] * (size - position - 1);
-  }
+  increment -= getTaskWork(position);
+  increment -= getTaskWork(position + 1);
+  increment += getTaskWork(position + 1, tasks[position + 1], position == 0 ? 0 : tasks[position - 1]);
   for (int i = position - 1; i > 0; i--) {
     increment -= change_costs[tasks[i - 1]][tasks[i]]; 
   }
   if (position != 0)
-    increment += change_costs[0][tasks[0]];
+    increment -= change_costs[0][tasks[0]];
   return increment;
 }
 
 int Machine::testChangeTask(int position, int task) const {
   int increment = 0;
-  int previous_task = position == 0 ? 0 : tasks[position - 1];
-  int next_task = position == size - 1 ? -1 : tasks[position + 1];
-  increment -= change_costs[previous_task][tasks[position]] * (size - position);
-  increment += change_costs[previous_task][task] * (size - position);
-  if (next_task != -1) {
-    increment += change_costs[tasks[position]][next_task] * (size - position - 1);
-    increment += change_costs[task][next_task] * (size - position - 1);
-  }
+  increment -= getTaskWork(position);
+  increment -= getTaskWork(position + 1);
+  increment += getTaskWork(position, task);
+  increment += getTaskWork(position + 1, -1, task);
   return increment;
 }
 
@@ -117,12 +111,30 @@ int Machine::testSwapTasks(int from, int to) const {
   int increment = 0;
   if (from == to)
     return 0;
-
-  int from_prev = from == 0 ? 0 : tasks[from - 1];
-  int from_next = from == size - 1 ? -1 : tasks[from + 1];
-  int to_prev = to == 0 ? 0 : tasks[to - 1];
-  int to_next = to == size - 1 ? -1 : tasks[to + 1];
-  increment -= change_costs[from_prev]
+  if (from == to + 1) {
+    increment -= getTaskWork(from);
+    increment -= getTaskWork(from + 1);
+    increment -= getTaskWork(to);
+    increment += getTaskWork(from, tasks[to], tasks[from]);
+    increment += getTaskWork(from + 1, -1, tasks[to]);
+    increment += getTaskWork(to, tasks[from]);
+  } else if (to == from + 1) {
+    increment -= getTaskWork(from);
+    increment -= getTaskWork(to);
+    increment -= getTaskWork(to + 1);
+    increment += getTaskWork(from, tasks[to]);
+    increment += getTaskWork(to, tasks[from], tasks[to]);
+    increment += getTaskWork(to + 1, -1, tasks[from]);
+  } else {
+    increment -= getTaskWork(from);
+    increment -= getTaskWork(from + 1);
+    increment -= getTaskWork(to);
+    increment -= getTaskWork(to + 1);
+    increment += getTaskWork(from, tasks[to]);
+    increment += getTaskWork(from + 1, -1, tasks[to]);
+    increment += getTaskWork(to, tasks[from]);
+    increment += getTaskWork(to + 1, -1, tasks[from]);
+  }
   return increment;
 }
 
@@ -131,6 +143,7 @@ int Machine::testMoveTask(int from, int to) const {
   return increment;
 }
 
+
 void Machine::addTask(int task, int position, int increment) {
   for (int t = size; t > position; t--) {
     tasks[t] = tasks[t - 1];
@@ -138,6 +151,30 @@ void Machine::addTask(int task, int position, int increment) {
   size++;
   tct += increment;
   tasks[position] = task;
+}
+
+void Machine::removeTask(int position, int increment) {
+  size--;
+  for (int t = position; t < size; t++) {
+    tasks[t] = tasks[t + 1];
+  }
+  tasks[size] = 0;
+  tct += increment;
+}
+
+void Machine::changeTask(int position, int task, int increment) {
+  tasks[position] = task;
+  tct += increment;
+}
+
+void Machine::swapTasks(int from, int to, int increment) {
+  int temp = tasks[from];
+  tasks[from] = tasks[to];
+  tasks[to] = temp;
+  tct += increment;
+}
+
+void Machine::moveTask(int from, int to, int increment) {
 }
 
 int Machine::bestInsert(int task, int* increment) const {
@@ -159,14 +196,14 @@ int Machine::getTCT() const {
 }
 
 int Machine::getTaskWork(int position, int task, int previous_task) const {
-  if (previous_task == -1) {
-    previous_task = position == 0 ? 
-
-  if (position == 0) {
-    return change_costs[0][tasks[position]] * size;
-  } else {
-    return change_costs[tasks[position - 1]][tasks[position]] * (size - position);
+  if (previous_task == -1)
+    previous_task = position == 0 ? 0 : tasks[position - 1];
+  if (task == -1) {
+    if (position >= size)
+      return 0;
+    task = tasks[position];
   }
+  return change_costs[previous_task][task] * (size - position);
 }
 
 int Machine::confirmTCT() const {

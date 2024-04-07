@@ -6,6 +6,8 @@
  * @since 20 mar 2024
  */
 
+#define TEST
+
 #include <cstdio>
 #include <string>
 
@@ -13,6 +15,7 @@
 #include "../lib/grasp.h"
 #include "../lib/problem.h"
 
+#ifndef TEST
 int main(int argc, char** argv) {
   srand(time(NULL));
 
@@ -42,3 +45,48 @@ int main(int argc, char** argv) {
   delete solver;
   return 0;
 }
+#endif
+
+#ifdef TEST
+int main(int argc, char** argv) {
+  Problem problem(argv[1]);
+  Machine test_machine;
+  test_machine.fromProblem(&problem);
+
+  test_machine.addTask(1, 0, test_machine.testAddTask(1, 0));
+  test_machine.addTask(2, 1, test_machine.testAddTask(2, 1));
+  test_machine.addTask(3, 2, test_machine.testAddTask(3, 2));
+  test_machine.print();
+  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
+
+  printf("works: 1=%d, 2=%d, 3=%d\n", 
+         test_machine.getTaskWork(0),
+         test_machine.getTaskWork(1),
+         test_machine.getTaskWork(2));
+
+  test_machine.removeTask(2, test_machine.testRemoveTask(2));
+  test_machine.print();
+  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
+
+  test_machine.changeTask(1, 3, test_machine.testChangeTask(1, 3));
+  test_machine.print();
+  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
+  test_machine.changeTask(0, 2, test_machine.testChangeTask(0, 2));
+  test_machine.print();
+  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
+  test_machine.addTask(1, 2, test_machine.testAddTask(1, 2));
+  test_machine.print();
+  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
+  test_machine.swapTasks(0, 2, test_machine.testSwapTasks(0, 2));
+  test_machine.print();
+  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
+  test_machine.swapTasks(1, 2, test_machine.testSwapTasks(1, 2));
+  test_machine.print();
+  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
+  test_machine.swapTasks(1, 0, test_machine.testSwapTasks(1, 0));
+  test_machine.print();
+  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
+
+  return 0;
+}
+#endif

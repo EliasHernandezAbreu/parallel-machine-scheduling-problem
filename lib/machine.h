@@ -73,6 +73,13 @@ public:
    */
   void addTask(int task, int position, int increment);
 
+  void removeTask(int position, int increment);
+
+  void changeTask(int position, int task, int increment);
+
+  void swapTasks(int from, int to, int increment);
+
+  void moveTask(int from, int to, int increment);
   /**
    * Gets the best insert and position for a task
    * @param task The task to test
