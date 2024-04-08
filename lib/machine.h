@@ -59,11 +59,21 @@ public:
    */
   int testRemoveTask(int position) const;
 
+  /**
+   * Gets the increment when changing the task at a position
+   * @param position The position
+   * @param task The task
+   * @returns The increment
+   */
   int testChangeTask(int position, int task) const;
 
+  /**
+   * Gets the increment when swapping two tasks
+   * @param from One of the positions
+   * @param to The other position
+   * @returns The increment
+   */
   int testSwapTasks(int from, int to) const;
-  
-  int testMoveTask(int from, int to) const;
 
   /**
    * Adds a task to the machine
@@ -73,13 +83,29 @@ public:
    */
   void addTask(int task, int position, int increment);
 
+  /**
+   * Removes a task
+   * @param position The position to remove at
+   * @param increment The increment of the operation
+   */
   void removeTask(int position, int increment);
 
+  /**
+   * Changes the task at a position
+   * @param position The position to change the task at
+   * @param task The task to change to
+   * @param increment The increment of the operation
+   */
   void changeTask(int position, int task, int increment);
 
+  /**
+   * Swaps two tasks
+   * @param from One of the positions
+   * @param to The other position
+   * @param increment The increment of the operation
+   */
   void swapTasks(int from, int to, int increment);
 
-  void moveTask(int from, int to, int increment);
   /**
    * Gets the best insert and position for a task
    * @param task The task to test

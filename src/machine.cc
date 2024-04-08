@@ -138,12 +138,6 @@ int Machine::testSwapTasks(int from, int to) const {
   return increment;
 }
 
-int Machine::testMoveTask(int from, int to) const {
-  int increment = 0;
-  return increment;
-}
-
-
 void Machine::addTask(int task, int position, int increment) {
   for (int t = size; t > position; t--) {
     tasks[t] = tasks[t - 1];
@@ -172,9 +166,6 @@ void Machine::swapTasks(int from, int to, int increment) {
   tasks[from] = tasks[to];
   tasks[to] = temp;
   tct += increment;
-}
-
-void Machine::moveTask(int from, int to, int increment) {
 }
 
 int Machine::bestInsert(int task, int* increment) const {

@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
 }
 #endif
 
+
 #ifdef TEST
 int main(int argc, char** argv) {
   Problem problem(argv[1]);
@@ -84,6 +85,12 @@ int main(int argc, char** argv) {
   test_machine.print();
   printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
   test_machine.swapTasks(1, 0, test_machine.testSwapTasks(1, 0));
+  test_machine.print();
+  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
+  test_machine.removeTask(2, test_machine.testRemoveTask(2));
+  test_machine.print();
+  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
+  test_machine.addTask(3, 0, test_machine.testAddTask(3, 0));
   test_machine.print();
   printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
 
