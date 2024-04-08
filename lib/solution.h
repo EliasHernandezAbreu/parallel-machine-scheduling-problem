@@ -123,6 +123,14 @@ public:
    */
   int testMovement(TaskMovement* movement) const;
 
+  int sameMachineReinsert();
+
+  int globalReinsert();
+
+  int sameMachineSwap();
+
+  int globalSwap();
+
   /**
    * Copies a solution
    * @param other The other solution

@@ -111,76 +111,142 @@ void Solution::bestInsert(int task, int* increment, int* machine_index, int* pos
 }
 
 int Solution::testMovement(TaskMovement* movement) const {
-  /*
-  int increment_from = 0;
-  int increment_to = 0;
-  int const *const *const change_costs = original_problem->getChangeCosts();
-  const std::vector<int>& from_machine = machine_tasks[movement->from_machine];
-  const std::vector<int>& to_machine = machine_tasks[movement->to_machine];
-
-
-  if (movement->from_machine == movement->to_machine && movement->to_position == movement->from_position) {
-    return 0;
-  } else if (movement->from_position == machine_tasks[movement->from_machine].size()) {
-    throw std::runtime_error("Task out of machine size");
-  } else if (movement->swap && movement->to_position == machine_tasks[movement->to_machine].size()) {
-    throw std::runtime_error("Task out of machine size in swap");
-  }
-
-  if (movement->swap) {
-    // Task swap
-    const int* from_task = &(from_machine[movement->from_position]);
-    const int* to_task = &(to_machine[movement->to_position]);
-
-    int from_previous = movement->from_position == 0 ? 0 : *(from_task - 1);
-    int from_next = movement->from_position == from_machine.size() - 1 ? -1 : *(from_task + 1);
-
-    increment_from -= change_costs[from_previous][*(from_task)] * (from_machine.size() - movement->from_position);
-    increment_from += change_costs[from_previous][*(to_task)] * (from_machine.size() - movement->from_position);
-    if (from_next != -1) {
-      increment_from -= change_costs[*(from_task)][from_next] * (from_machine.size() - movement->from_position - 1);
-      increment_from += change_costs[*(to_task)][from_next] * (from_machine.size() - movement->from_position - 1);
-    }
-
-    int to_previous = movement->to_position == 0 ? 0 : *(to_task - 1);
-    int to_next = movement->to_position == to_machine.size() - 1 ? -1 : *(to_task + 1);
-
-    increment_to -= change_costs[to_previous][*(to_task)] * (to_machine.size() - movement->to_position);
-    increment_to += change_costs[to_previous][*(from_task)] * (to_machine.size() - movement->to_position);
-    if (to_next != -1) {
-      increment_to -= change_costs[*(to_task)][to_next] * (to_machine.size() - movement->to_position - 1);
-      increment_to += change_costs[*(from_task)][to_next] * (to_machine.size() - movement->to_position - 1);
-    }
-  } else {
-    if (movement->from_machine != movement->to_machine) {
-      const int* from_task = &(from_machine[movement->from_position]);
-      const int* to_task = &(to_machine[movement->to_position]);
-
-      int from_previous = movement->from_position == 0 ? 0 : *(from_task - 1);
-      if (movement->from_position != from_machine.size() - 1) {
-        increment_from -= change_costs[*from_task][*(from_task + 1)] * (from_machine.size() - movement->from_position - 1);
-        increment_from += change_costs[from_previous][*(from_task + 1)] * (from_machine.size() - movement->from_position - 1);
-      }
-      for (int pos = movement->from_position; pos > 0; pos--) {
-        increment_from -= change_costs[from_machine[pos - 1]][from_machine[pos]];
-      }
-      increment_from -= change_costs[0][from_machine[0]];
-
-      int to_previous = movement->to_position == 0 ? 0 : *(to_task - 1);
-      if (movement->to_position != to_machine.size() - 1) {
-        increment_to -= change_costs[to_previous][*to_task] * (to_machine.size() - movement->to_position);
-        increment_to += change_costs[from_previous][*(from_task + 1)] * (from_machine.size() - movement->from_position - 1);
-      }
-      for (int pos = movement->from_position - 1; pos > 0; pos--) {
-        increment_from -= change_costs[from_machine[pos - 1]][from_machine[pos]];
-      }
-      increment_from -= change_costs[0][from_machine[0]];
-    }
-  }
-
-  movement->increment_from = increment_from;
-  movement->increment_to = increment_to;
-  return increment_from + increment_to;
-  */
+  
   return 0;
+}
+
+int Solution::sameMachineReinsert() {
+  int best_remove_increment = 0;
+  int best_insert_increment = 0;
+  int best_machine = 0;
+  int best_insert_position = 0;
+  int best_remove_position = 0;
+  for (int m = 0; m < machine_amount; m++) {
+    for (int pos = 0; pos < machines[m].getSize(); pos++) {
+      int removed_task = machines[m][pos];
+      int remove_increment = machines[m].testRemoveTask(pos);
+      int insert_increment;
+      machines[m].removeTask(pos, remove_increment);
+      int insert_position = machines[m].bestInsert(removed_task, &insert_increment);
+      machines[m].addTask(removed_task, pos, -remove_increment);
+      if (insert_increment + remove_increment < best_insert_increment + best_remove_increment) {
+        best_insert_increment = insert_increment;
+        best_remove_increment = remove_increment;
+        best_machine = m;
+        best_insert_position = insert_position;
+        best_remove_position = pos;
+      }
+    }
+  }
+  if (best_insert_increment + best_remove_increment == 0) {
+    return 0;
+  }
+  int task = machines[best_machine][best_remove_position];
+  machines[best_machine].removeTask(best_remove_position, best_remove_increment);
+  machines[best_machine].addTask(task, best_insert_position, best_insert_increment);
+  return best_insert_increment + best_remove_increment;
+}
+
+int Solution::globalReinsert() {
+  int best_remove_increment = 0;
+  int best_insert_increment = 0;
+  int best_remove_machine = 0;
+  int best_insert_machine = 0;
+  int best_insert_position = 0;
+  int best_remove_position = 0;
+  for (int m = 0; m < machine_amount; m++) {
+    for (int pos = 0; pos < machines[m].getSize(); pos++) {
+      int removed_task = machines[m][pos];
+      int remove_increment = machines[m].testRemoveTask(pos);
+      int insert_increment;
+      int insert_position;
+      int insert_machine;
+      machines[m].removeTask(pos, remove_increment);
+      bestInsert(removed_task, &insert_increment, &insert_machine, &insert_position, 0);
+      machines[m].addTask(removed_task, pos, -remove_increment);
+      if (insert_increment + remove_increment < best_insert_increment + best_remove_increment) {
+        best_insert_increment = insert_increment;
+        best_remove_increment = remove_increment;
+        best_insert_machine = insert_machine;
+        best_remove_machine = m;
+        best_insert_position = insert_position;
+        best_remove_position = pos;
+      }
+    }
+  }
+  if (best_insert_increment + best_remove_increment == 0) {
+    return 0;
+  }
+  int task = machines[best_remove_machine][best_remove_position];
+  machines[best_remove_machine].removeTask(best_remove_position, best_remove_increment);
+  machines[best_insert_machine].addTask(task, best_insert_position, best_insert_increment);
+  return best_insert_increment + best_remove_increment;
+}
+
+int Solution::sameMachineSwap() {
+  int best_machine = 0;
+  int best_from_position = 0;
+  int best_to_position = 0;
+  int best_increment = 0;
+  for (int m = 0; m < machine_amount; m++) {
+    for (int from_p = 0; from_p < machines[m].getSize(); from_p++) {
+      for (int to_p = 0; to_p < machines[m].getSize(); to_p++) {
+        int inc = machines[m].testSwapTasks(from_p, to_p);
+        if (inc < best_increment) {
+          best_machine = m;
+          best_from_position = from_p;
+          best_to_position = to_p;
+          best_increment = inc;
+        }
+      }
+    }
+  } 
+  if (best_increment == 0) return 0;
+  machines[best_machine].swapTasks(best_from_position, best_to_position, best_increment);
+  return best_increment;
+}
+
+int Solution::globalSwap() {
+  int best_machine_from = 0;
+  int best_machine_to = 0;
+  int best_from_position = 0;
+  int best_to_position = 0;
+  int best_to_increment = 0;
+  int best_from_increment = 0;
+  for (int from_m = 0; from_m < machine_amount; from_m++) {
+    for (int to_m = 0; to_m < machine_amount; to_m++) {
+      for (int from_p = 0; from_p < machines[from_m].getSize(); from_p++) {
+        for (int to_p = 0; to_p < machines[from_m].getSize(); to_p++) {
+          int from_inc = 0;
+          int to_inc = 0;
+          if (from_m == to_m) {
+            from_inc = machines[from_m].testSwapTasks(from_p, to_p);
+            to_inc = 0;
+          } else {
+            from_inc += machines[from_m].testChangeTask(from_p, machines[to_m][to_p]);
+            to_inc += machines[to_m].testChangeTask(to_p, machines[from_m][from_p]);
+          }
+          if (from_inc + to_inc < best_to_increment + best_from_increment) {
+            best_machine_from = from_m;
+            best_machine_to = to_m;
+            best_from_position = from_p;
+            best_to_position = to_p;
+            best_to_increment = to_inc;
+            best_from_increment = from_inc;
+          }
+        }
+      }
+    } 
+  } 
+  if (best_from_increment + best_to_increment >= 0) return 0;
+  if (best_machine_from == best_machine_to) {
+    machines[best_machine_from].swapTasks(best_from_position, best_to_position, best_from_increment + best_to_increment);
+  } else {
+    printf("breaking ?? \n");
+    int from_task = machines[best_machine_from][best_from_position];
+    int to_task = machines[best_machine_to][best_to_position];
+    machines[best_machine_from].changeTask(best_from_position, to_task, best_from_increment);
+    machines[best_machine_to].changeTask(best_to_position, from_task, best_to_increment);
+  }
+  return best_to_increment + best_from_increment;
 }

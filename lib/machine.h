@@ -146,8 +146,19 @@ public:
   * @returns The amount of tasks in the machine
   */
   int getSize() const;
-
+  
+  /**
+  * Gets the array of tasks
+  * @returns The array of tasks
+  */
   int const *const getTasks() const;
+
+  /**
+  * Return the task at a position
+  * @param position The position
+  * @returns The task
+  */
+  int operator[](int position); 
 
 private:
   int** change_costs;

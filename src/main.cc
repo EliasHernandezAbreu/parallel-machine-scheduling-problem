@@ -6,8 +6,9 @@
  * @since 20 mar 2024
  */
 
-#define TEST
+//#define TEST
 
+#include <algorithm>
 #include <cstdio>
 #include <string>
 
@@ -37,10 +38,52 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+
   Problem problem(argv[1]);
   Solution solution = solver->solve(&problem);
   printf("\n");
   solution.print();
+  int increment = -1;
+
+  printf("\nSAME MACHINE REINSERTS:\n\n");
+  increment = -1;
+  while (increment < 0) {
+    increment = solution.sameMachineReinsert();
+    if (increment < 0) {
+      puts("\n");
+      solution.print();
+    }
+  };
+
+  printf("\nGLOBAL REINSERTS:\n\n");
+  increment = -1;
+  while (increment < 0) {
+    increment = solution.globalReinsert();
+    if (increment < 0) {
+      puts("\n");
+      solution.print();
+    }
+  };
+
+  printf("\nSAME MACHINE SWAPS:\n\n");
+  increment = -1;
+  while (increment < 0) {
+    increment = solution.sameMachineSwap();
+    if (increment < 0) {
+      puts("\n");
+      solution.print();
+    }
+  };
+
+  printf("\nGLOBAL SWAPS:\n\n");
+  increment = -1;
+  while (increment < 0) {
+    increment = solution.globalSwap();
+    if (increment < 0) {
+      puts("\n");
+      solution.print();
+    }
+  };
 
   delete solver;
   return 0;
@@ -94,6 +137,7 @@ int main(int argc, char** argv) {
   test_machine.print();
   printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
 
+  
   return 0;
 }
 #endif

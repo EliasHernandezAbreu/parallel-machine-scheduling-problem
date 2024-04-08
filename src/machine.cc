@@ -89,7 +89,13 @@ int Machine::testRemoveTask(int position) const {
   int increment = 0;
   increment -= getTaskWork(position);
   increment -= getTaskWork(position + 1);
-  increment += getTaskWork(position + 1, tasks[position + 1], position == 0 ? 0 : tasks[position - 1]);
+  if (position < size - 1) {
+    if (position == 0) {
+      increment += getTaskWork(position + 1, tasks[position + 1], 0);
+    } else{
+      increment += getTaskWork(position + 1, tasks[position + 1], tasks[position - 1]);
+    }
+  }
   for (int i = position - 1; i > 0; i--) {
     increment -= change_costs[tasks[i - 1]][tasks[i]]; 
   }
@@ -218,4 +224,8 @@ int Machine::getSize() const {
 
 int const *const Machine::getTasks() const {
   return tasks;
+}
+
+int Machine::operator[](int position) {
+  return tasks[position];
 }
