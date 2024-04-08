@@ -8,8 +8,9 @@
  * @file Represents a machine
  */
 
-#include "../lib/machine.h"
 #include <cstdio>
+
+#include "../lib/machine.h"
 
 Machine::Machine() {
   change_costs = nullptr;

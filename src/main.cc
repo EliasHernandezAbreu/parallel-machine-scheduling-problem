@@ -8,7 +8,6 @@
 
 //#define TEST
 
-#include <algorithm>
 #include <cstdio>
 #include <string>
 

@@ -216,7 +216,7 @@ int Solution::globalSwap() {
   for (int from_m = 0; from_m < machine_amount; from_m++) {
     for (int to_m = 0; to_m < machine_amount; to_m++) {
       for (int from_p = 0; from_p < machines[from_m].getSize(); from_p++) {
-        for (int to_p = 0; to_p < machines[from_m].getSize(); to_p++) {
+        for (int to_p = 0; to_p < machines[to_m].getSize(); to_p++) {
           int from_inc = 0;
           int to_inc = 0;
           if (from_m == to_m) {
@@ -242,7 +242,6 @@ int Solution::globalSwap() {
   if (best_machine_from == best_machine_to) {
     machines[best_machine_from].swapTasks(best_from_position, best_to_position, best_from_increment + best_to_increment);
   } else {
-    printf("breaking ?? \n");
     int from_task = machines[best_machine_from][best_from_position];
     int to_task = machines[best_machine_to][best_to_position];
     machines[best_machine_from].changeTask(best_from_position, to_task, best_from_increment);
