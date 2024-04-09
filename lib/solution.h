@@ -123,12 +123,28 @@ public:
    */
   int testMovement(TaskMovement* movement) const;
 
+  /**
+   * Improves the solution by reinserting a task in its same machine
+   * @returns The improvement
+   */
   int sameMachineReinsert();
 
+  /**
+   * Improves the solution by reinserting a task globally
+   * @returns The improvement
+   */
   int globalReinsert();
 
+  /**
+   * Improves the solution by swapping two tasks in the same machine
+   * @returns The improvement
+   */
   int sameMachineSwap();
 
+  /**
+   * Improves the solution by swapping two tasks globally
+   * @returns The improvement
+   */
   int globalSwap();
 
   /**

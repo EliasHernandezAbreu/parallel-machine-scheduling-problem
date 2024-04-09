@@ -111,8 +111,27 @@ void Solution::bestInsert(int task, int* increment, int* machine_index, int* pos
 }
 
 int Solution::testMovement(TaskMovement* movement) const {
-  
-  return 0;
+  if (movement->swap) {
+    if (movement->from_machine == movement->to_machine) {
+      movement->increment_from = machines[movement->from_machine].testSwapTasks(movement->from_position, movement->to_position);
+      movement->increment_to = 0;
+    } else {
+      int from_task = machines[movement->from_machine][movement->from_position];
+      int to_task = machines[movement->to_machine][movement->to_position];
+      movement->increment_from = machines[movement->from_machine].testChangeTask(movement->from_position, to_task);
+      movement->increment_to = machines[movement->from_machine].testChangeTask(movement->to_position, from_task);
+    }
+  } else {
+    if (movement->from_machine == movement->to_machine) {
+      //////////////////////////////////////////////////////////////////////////////////////////
+      // implement
+    } else {
+      int task = machines[movement->from_machine][movement->from_position];
+      movement->increment_from = machines[movement->from_machine].testRemoveTask(movement->from_position);
+      movement->increment_to = machines[movement->to_machine].testAddTask(task, movement->to_position);
+    }
+  }
+  return movement->increment_from + movement->increment_to;
 }
 
 int Solution::sameMachineReinsert() {
