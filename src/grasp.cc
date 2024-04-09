@@ -55,7 +55,10 @@ int Grasp::improveSolution(Solution* solution) const {
 
 Solution Grasp::solve(const Problem *problem) const {
   Solution result(constructivePhase(problem));
+  float previous_tct = result.getTotalTCT();
   while (improveSolution(&result) < 0) {}
+  float improvement = (previous_tct - result.getTotalTCT()) / previous_tct;
+  printf("\nSolution improved by %f%%", improvement);
   return result;
 }
 
