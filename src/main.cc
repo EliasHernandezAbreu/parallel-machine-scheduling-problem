@@ -15,6 +15,11 @@
 #include "../lib/grasp.h"
 #include "../lib/problem.h"
 
+#include "../lib/machine-reinsert-grasp.h"
+#include "../lib/machine-swap-grasp.h"
+#include "../lib/global-reinsert-grasp.h"
+#include "../lib/global-swap-grasp.h"
+
 #ifndef TEST
 int main(int argc, char** argv) {
   srand(time(NULL));
@@ -31,58 +36,33 @@ int main(int argc, char** argv) {
   if (chosen_solver == 0) {
     solver = new Greedy();
   } else if (chosen_solver == 1) {
-    solver = new Grasp(3, 100);
+    printf("\n[0] None\n[1] Same machine reinsert\n[2] Same machine swap\n");
+    printf("[3] Global reinsert\n[4] Global swap\nChoose the improvement algorithm to use: ");
+    int chosen_improvement;
+    scanf("%d", &chosen_improvement);
+    if (chosen_improvement == 0) {
+      solver = new Grasp(3, 100);
+    } else if (chosen_improvement == 1) {
+      solver = new MachineReinsertGrasp(3, 100);
+    } else if (chosen_improvement == 2) {
+      solver = new MachineSwapGrasp(3, 100);
+    }else if (chosen_improvement == 3) {
+      solver = new GlobalReinsertGrasp(3, 100);
+    }else if (chosen_improvement == 4) {
+      solver = new GlobalSwapGrasp(3, 100);
+    }else {
+      printf("Please use a valid input. Input given: %d\n", chosen_improvement);
+      return 1;
+    }
   } else {
     printf("Please use a valid input. Input given: %d\n", chosen_solver);
     return 1;
   }
 
-
   Problem problem(argv[1]);
   Solution solution = solver->solve(&problem);
   printf("\n");
   solution.print();
-  int increment = -1;
-
-  printf("\nSAME MACHINE REINSERTS:\n\n");
-  increment = -1;
-  while (increment < 0) {
-    increment = solution.sameMachineReinsert();
-    if (increment < 0) {
-      puts("\n");
-      solution.print();
-    }
-  };
-
-  printf("\nGLOBAL REINSERTS:\n\n");
-  increment = -1;
-  while (increment < 0) {
-    increment = solution.globalReinsert();
-    if (increment < 0) {
-      puts("\n");
-      solution.print();
-    }
-  };
-
-  printf("\nSAME MACHINE SWAPS:\n\n");
-  increment = -1;
-  while (increment < 0) {
-    increment = solution.sameMachineSwap();
-    if (increment < 0) {
-      puts("\n");
-      solution.print();
-    }
-  };
-
-  printf("\nGLOBAL SWAPS:\n\n");
-  increment = -1;
-  while (increment < 0) {
-    increment = solution.globalSwap();
-    if (increment < 0) {
-      puts("\n");
-      solution.print();
-    }
-  };
 
   delete solver;
   return 0;

@@ -15,7 +15,7 @@ Grasp::Grasp(int best_solution_size, int repetitions) {
   this->repetitions = repetitions;
 }
 
-Solution Grasp::solve(const Problem *problem) const {
+Solution Grasp::constructivePhase(const Problem* problem) const {
   // Create lists to store best results for each task
   int best_machines[best_solutions_size];
   int best_positions[best_solutions_size];
@@ -47,5 +47,15 @@ Solution Grasp::solve(const Problem *problem) const {
   }
   Solution final_result(result[best_result_index]);
   return final_result;
+}
+
+int Grasp::improveSolution(Solution* solution) const {
+  return 0;
+}
+
+Solution Grasp::solve(const Problem *problem) const {
+  Solution result(constructivePhase(problem));
+  while (improveSolution(&result) < 0) {}
+  return result;
 }
 
