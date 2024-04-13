@@ -8,10 +8,6 @@
  * @file Represents the vns pmsp algorithm
  */
 
-#define DEBUG(...) printf(...)
-
-#include <cstdio>
-
 #include "../lib/vns.h"
 #include "../lib/solution.h"
 

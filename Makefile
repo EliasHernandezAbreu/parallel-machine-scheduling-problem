@@ -3,4 +3,4 @@ b:
 	g++ -Wall -o bin/pmsp.out src/*
 
 r:
-	./bin/pmsp.out
+	./bin/pmsp.out test/pequeño.txt
