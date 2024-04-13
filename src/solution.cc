@@ -268,3 +268,18 @@ int Solution::globalSwap() {
   }
   return best_to_increment + best_from_increment;
 }
+
+void Solution::vnd() {
+  int current_increment = -1;
+  while (current_increment < 0) {
+    current_increment = globalReinsert();
+    if (current_increment < 0) continue;
+    current_increment = sameMachineSwap();
+    if (current_increment < 0) continue;
+    current_increment = sameMachineReinsert();
+    if (current_increment < 0) continue;
+    current_increment = globalSwap();
+    if (current_increment < 0) continue;
+    break;
+  }
+}

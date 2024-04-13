@@ -153,6 +153,11 @@ public:
   */
   void operator=(const Solution& other);
 
+  /**
+  * Runs the vnd algorithm from the current solution
+  */
+  void vnd();
+
 private:
   int machine_amount;
   Machine* machines;
