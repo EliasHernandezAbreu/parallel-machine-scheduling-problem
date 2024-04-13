@@ -41,9 +41,9 @@ public:
    * @param probelm The PMSP probelm
    * @returns The found solution to the problem
    */
-  Solution solve(const Problem *problem) const override;
+  virtual Solution solve(const Problem *problem) const override;
 
-private:
+protected:
   int best_solutions_size;
   int repetitions;
 };

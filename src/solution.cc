@@ -9,6 +9,7 @@
  */
 
 #include <cstdio>
+#include <cstdlib>
 
 #include "../lib/solution.h"
 
@@ -22,11 +23,20 @@ Solution::Solution(const Problem *problem) {
 
 Solution::Solution() {
   machine_amount = 0;
-  machines = nullptr;
+  machines = new Machine[1]();
 }
 
 Solution::Solution(const Solution& other) {
   machine_amount = other.machine_amount;
+  machines = new Machine[machine_amount]();
+  for (int m = 0; m < machine_amount; m++) {
+    machines[m].copy(other.machines[m]);
+  }
+}
+
+void Solution::operator=(const Solution& other) {
+  machine_amount = other.machine_amount;
+  delete[] machines;
   machines = new Machine[machine_amount]();
   for (int m = 0; m < machine_amount; m++) {
     machines[m].copy(other.machines[m]);
@@ -123,8 +133,12 @@ int Solution::testMovement(TaskMovement* movement) const {
     }
   } else {
     if (movement->from_machine == movement->to_machine) {
-      //////////////////////////////////////////////////////////////////////////////////////////
-      // implement
+      Machine& machine = machines[movement->from_machine];
+      movement->increment_from = machine.testRemoveTask(movement->from_position);
+      int task = machine[movement->from_position];
+      machine.removeTask(movement->from_position, 0);
+      movement->increment_to = machine.testAddTask(task, movement->to_position);
+      machine.addTask(task, movement->from_position, 0);
     } else {
       int task = machines[movement->from_machine][movement->from_position];
       movement->increment_from = machines[movement->from_machine].testRemoveTask(movement->from_position);
@@ -132,6 +146,37 @@ int Solution::testMovement(TaskMovement* movement) const {
     }
   }
   return movement->increment_from + movement->increment_to;
+}
+
+void Solution::move(TaskMovement* movement) {
+  if (movement->swap) {
+    if (movement->from_machine == movement->to_machine) {
+      int frompos = movement->from_position;
+      int topos = movement->to_position;
+      Machine& machine = machines[movement->from_machine];
+      machine.swapTasks(frompos, topos, movement->increment_from + movement->increment_to);
+    } else {
+      Machine& frommach = machines[movement->from_machine];
+      Machine& tomach = machines[movement->to_machine];
+      int fromtask = frommach[movement->from_position];
+      int totask = tomach[movement->to_position];
+      frommach.changeTask(movement->from_position, totask, movement->increment_from);
+      tomach.changeTask(movement->to_position, fromtask, movement->increment_to);
+    }
+  } else {
+    if (movement->from_machine == movement->to_machine) {
+      Machine& machine = machines[movement->from_machine];
+      int task = machine[movement->from_position];
+      machine.removeTask(movement->from_position, movement->increment_from);
+      machine.addTask(task, movement->to_position, movement->increment_to);
+    } else {
+      Machine& frommach = machines[movement->from_machine];
+      Machine& tomach = machines[movement->to_machine];
+      int task = frommach[movement->from_position];
+      frommach.removeTask(movement->from_position, movement->increment_from);
+      tomach.addTask(task, movement->to_position, movement->increment_to);
+    }
+  }
 }
 
 int Solution::sameMachineReinsert() {
@@ -281,5 +326,18 @@ void Solution::vnd() {
     current_increment = globalSwap();
     if (current_increment < 0) continue;
     break;
+  }
+}
+
+void Solution::perturbate(int length) {
+  for (int i = 0; i < length; i++) {
+  TaskMovement movement;
+  movement.from_machine = rand() % machine_amount;
+  movement.to_machine = rand() % machine_amount;
+  movement.from_position = rand() % machines[movement.from_machine].getSize();
+  movement.to_position = rand() % machines[movement.to_machine].getSize();
+  movement.swap = rand() % 1;
+  testMovement(&movement);
+  move(&movement);
   }
 }

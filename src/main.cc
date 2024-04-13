@@ -13,6 +13,7 @@
 
 #include "../lib/greedy.h"
 #include "../lib/grasp.h"
+#include "../lib/vns.h"
 #include "../lib/problem.h"
 
 #include "../lib/machine-reinsert-grasp.h"
@@ -30,7 +31,7 @@ int main(int argc, char** argv) {
   }
 
   int chosen_solver;
-  printf("[0] Greedy\n[1] Grasp\nChoose the solver to use: ");
+  printf("[0] Greedy\n[1] Grasp\n[2] VNS\nChoose the solver to use: ");
   scanf("%d", &chosen_solver);
   Algorithm *solver;
   if (chosen_solver == 0) {
@@ -54,6 +55,8 @@ int main(int argc, char** argv) {
       printf("Please use a valid input. Input given: %d\n", chosen_improvement);
       return 1;
     }
+  } else if (chosen_solver == 2) {
+    solver = new Vns(3, 100, 6);
   } else {
     printf("Please use a valid input. Input given: %d\n", chosen_solver);
     return 1;

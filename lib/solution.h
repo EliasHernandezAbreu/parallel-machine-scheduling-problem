@@ -124,6 +124,12 @@ public:
   int testMovement(TaskMovement* movement) const;
 
   /**
+   * Makes a movement in the current machine
+   * @param movement The movement to do
+   */
+  void move(TaskMovement* movement);
+
+  /**
    * Improves the solution by reinserting a task in its same machine
    * @returns The improvement
    */
@@ -157,6 +163,12 @@ public:
   * Runs the vnd algorithm from the current solution
   */
   void vnd();
+
+  /**
+  * Makes a random perturbation to the solution
+  * @param length The movements to perform in the perturbation
+  */
+  void perturbate(int length);
 
 private:
   int machine_amount;
