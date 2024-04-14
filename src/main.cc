@@ -6,10 +6,12 @@
  * @since 20 mar 2024
  */
 
-//#define TEST
+#define TEST
 
 #include <cstdio>
+#include <ctime>
 #include <string>
+#include <time.h>
 
 #include "../lib/greedy.h"
 #include "../lib/grasp.h"
@@ -63,7 +65,14 @@ int main(int argc, char** argv) {
   }
 
   Problem problem(argv[1]);
-  Solution solution = solver->solve(&problem);
+  long t = clock();
+  Solution solution= solver->solve(&problem);
+  double time = (double)(clock() - t) / CLOCKS_PER_SEC;
+  if (time < 0.1) {
+    printf("Time = %f ms\n", time * 1000);
+  } else {
+    printf("Time = %f s\n", time);
+  }
   printf("\n");
   solution.print();
 
@@ -74,52 +83,69 @@ int main(int argc, char** argv) {
 
 
 #ifdef TEST
-int main(int argc, char** argv) {
-  Problem problem(argv[1]);
-  Machine test_machine;
-  test_machine.fromProblem(&problem);
-
-  test_machine.addTask(1, 0, test_machine.testAddTask(1, 0));
-  test_machine.addTask(2, 1, test_machine.testAddTask(2, 1));
-  test_machine.addTask(3, 2, test_machine.testAddTask(3, 2));
-  test_machine.print();
-  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
-
-  printf("works: 1=%d, 2=%d, 3=%d\n", 
-         test_machine.getTaskWork(0),
-         test_machine.getTaskWork(1),
-         test_machine.getTaskWork(2));
-
-  test_machine.removeTask(2, test_machine.testRemoveTask(2));
-  test_machine.print();
-  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
-
-  test_machine.changeTask(1, 3, test_machine.testChangeTask(1, 3));
-  test_machine.print();
-  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
-  test_machine.changeTask(0, 2, test_machine.testChangeTask(0, 2));
-  test_machine.print();
-  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
-  test_machine.addTask(1, 2, test_machine.testAddTask(1, 2));
-  test_machine.print();
-  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
-  test_machine.swapTasks(0, 2, test_machine.testSwapTasks(0, 2));
-  test_machine.print();
-  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
-  test_machine.swapTasks(1, 2, test_machine.testSwapTasks(1, 2));
-  test_machine.print();
-  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
-  test_machine.swapTasks(1, 0, test_machine.testSwapTasks(1, 0));
-  test_machine.print();
-  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
-  test_machine.removeTask(2, test_machine.testRemoveTask(2));
-  test_machine.print();
-  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
-  test_machine.addTask(3, 0, test_machine.testAddTask(3, 0));
-  test_machine.print();
-  printf(" - tct = %d, confirmed = %d\n", test_machine.getTCT(), test_machine.confirmTCT());
-
-  
-  return 0;
+void testProblems(const int prob_amount, const char** problems, Algorithm* solver) {
+  for (int p = 0; p < prob_amount; p++) {
+    Problem problem(problems[p]);
+    long t = clock();
+    Solution solution = solver->solve(&problem);
+    double time = (double)(clock() - t) / CLOCKS_PER_SEC;
+    printf("Test: %s\n", problems[p]);
+    if (time < 0.1) {
+      printf("Time = %.3f ms\n", time * 1000);
+    } else {
+      printf("Time = %.3f s\n", time);
+    }
+    printf("TCT = %d, (%d)\n", solution.getTotalTCT(), solution.getConfirmedTotalTCT());
+  }
 }
+
+int main(int argc, char** argv) {
+  srand(time(NULL));
+
+  const int problem_amount = 6;
+  const char* problems[problem_amount] = {
+    "test/i40/I40j_2m_S1_1.txt",
+    "test/i40/I40j_4m_S1_1.txt",
+    "test/i40/I40j_8m_S1_1.txt",
+    "test/i70/I70j_2m_S1_1.txt",
+    "test/i70/I70j_4m_S1_1.txt",
+    "test/i70/I70j_8m_S1_1.txt"
+  };
+
+  Algorithm* solver;
+  puts("\nGREEDY");
+  solver = new Greedy();
+  testProblems(problem_amount, problems, solver);
+
+  puts("\nGRASP");
+  delete solver;
+  solver = new Grasp(3, 100);
+  testProblems(problem_amount, problems, solver);
+
+  puts("\nLOCAL SWAP GRASP");
+  delete solver;
+  solver = new MachineSwapGrasp(3, 100);
+  testProblems(problem_amount, problems, solver);
+
+  puts("\nLOCAL REINSERT GRASP");
+  delete solver;
+  solver = new MachineReinsertGrasp(3, 100);
+  testProblems(problem_amount, problems, solver);
+
+  puts("\nGLOBAL SWAP GRASP");
+  delete solver;
+  solver = new GlobalSwapGrasp(3, 100);
+  testProblems(problem_amount, problems, solver);
+
+  puts("\nGLOBAL REINSERT GRASP");
+  delete solver;
+  solver = new GlobalReinsertGrasp(3, 100);
+  testProblems(problem_amount, problems, solver);
+  
+  puts("\nVNS");
+  delete solver;
+  solver = new Vns(3, 100, 5);
+  testProblems(problem_amount, problems, solver);
+}
+
 #endif
