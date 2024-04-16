@@ -334,6 +334,11 @@ void Solution::perturbate(int length) {
     TaskMovement movement;
     movement.from_machine = rand() % machine_amount;
     movement.to_machine = rand() % machine_amount;
+    // Prevent using empty machines (was a bug before)
+    while (machines[movement.from_machine].getSize() == 0)
+      movement.from_machine = rand() % machine_amount;
+    while (machines[movement.to_machine].getSize() == 0)
+      movement.to_machine = rand() % machine_amount;
     movement.from_position = rand() % machines[movement.from_machine].getSize();
     movement.to_position = rand() % machines[movement.to_machine].getSize();
     movement.swap = rand() % 1;

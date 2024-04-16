@@ -144,7 +144,7 @@ int main(int argc, char** argv) {
   
   puts("\nVNS");
   delete solver;
-  solver = new Vns(3, 100, 5);
+  solver = new Vns(3, 100, 8);
   testProblems(problem_amount, problems, solver);
 }
 

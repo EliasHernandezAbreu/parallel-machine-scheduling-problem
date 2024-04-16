@@ -14,7 +14,10 @@
 Solution Vns::solve(const Problem* problem) const {
   Solution best_solution;
   best_solution = constructivePhase(problem);
+  int worse_solution_counter = 0;
   for (int repetition = 0; repetition < repetitions; repetition++) {
+    if (worse_solution_counter > repetitions / 5) break;
+    worse_solution_counter++;
     Solution current_solution;
     current_solution = constructivePhase(problem);
     current_solution.vnd();
@@ -29,7 +32,7 @@ Solution Vns::solve(const Problem* problem) const {
     }
     if (current_solution.getTotalTCT() < best_solution.getTotalTCT()) {
       best_solution = current_solution;
-      repetition = 0;
+      worse_solution_counter = 0;
     }
   }
   return best_solution;
