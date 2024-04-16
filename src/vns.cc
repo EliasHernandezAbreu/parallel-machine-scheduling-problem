@@ -10,17 +10,21 @@
 
 #include "../lib/vns.h"
 #include "../lib/solution.h"
+#include "../lib/machine-reinsert-grasp.h"
 
 Solution Vns::solve(const Problem* problem) const {
+  MachineReinsertGrasp constructer(3, 100);
+  Solution initial_solution;
   Solution best_solution;
-  best_solution = constructivePhase(problem);
+  initial_solution = constructer.solve(problem);
+  best_solution = initial_solution;
+
   int worse_solution_counter = 0;
   for (int repetition = 0; repetition < repetitions; repetition++) {
     if (worse_solution_counter > repetitions / 5) break;
     worse_solution_counter++;
-    Solution current_solution;
-    current_solution = constructivePhase(problem);
-    current_solution.vnd();
+    Solution current_solution = initial_solution;
+
     for (int move_length = 1; move_length <= max_length; move_length++) {
       Solution new_solution(current_solution);
       new_solution.perturbate(move_length);
@@ -30,6 +34,7 @@ Solution Vns::solve(const Problem* problem) const {
         move_length = 1;
       }
     }
+    
     if (current_solution.getTotalTCT() < best_solution.getTotalTCT()) {
       best_solution = current_solution;
       worse_solution_counter = 0;

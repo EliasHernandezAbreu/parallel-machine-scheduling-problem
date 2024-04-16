@@ -84,28 +84,26 @@ int main(int argc, char** argv) {
 
 #ifdef TEST
 void testProblems(const int prob_amount, const char** problems, Algorithm* solver) {
+  printf("%-30s, %-3s, %-3s, %-10s, %-6s\n", "Test", "n", "m", "f", "CPU");
   for (int p = 0; p < prob_amount; p++) {
     Problem problem(problems[p]);
     long t = clock();
     Solution solution = solver->solve(&problem);
     double time = (double)(clock() - t) / CLOCKS_PER_SEC;
-    printf("Test: %s\n", problems[p]);
-    if (time < 0.1) {
-      printf("Time = %.3f ms\n", time * 1000);
-    } else {
-      printf("Time = %.3f s\n", time);
-    }
-    printf("TCT = %d, (%d)\n", solution.getTotalTCT(), solution.getConfirmedTotalTCT());
+    printf("%-30s, %-3d, %-3d, %-10d, %-10fms\n",
+      problems[p], problem.getTaskAmount(), problem.getMachineAmount(), solution.getTotalTCT(), time * 1000
+    );
   }
 }
 
 int main(int argc, char** argv) {
   srand(time(NULL));
 
-  const int problem_amount = 6;
+  const int problem_amount = 7;
   const char* problems[problem_amount] = {
     "test/i40/I40j_2m_S1_1.txt",
     "test/i40/I40j_4m_S1_1.txt",
+    "test/i40/I40j_6m_S1_1.txt",
     "test/i40/I40j_8m_S1_1.txt",
     "test/i70/I70j_2m_S1_1.txt",
     "test/i70/I70j_4m_S1_1.txt",
